@@ -1,0 +1,50 @@
+/* questionnaire.css */
+form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.question label {
+    margin-top: 10px;
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.options {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.options label {
+    margin-right: 15px;
+    display: inline-block;
+    font-size: 16px;
+    color: #007bff;
+}
+
+input[type="radio"] {
+    margin-right: 5px;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}

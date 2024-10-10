@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Questionnaire</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    </head>
+<body>
+    <div class="container">
+        <h1>Questionnaire Form</h1>
+        <form action="{{ url_for('submit_questionnaire') }}" method="post" id="questionnaireForm" class="questionnaire_form">
+            <!-- Hidden field for video_name -->
+            <input type="hidden" name="video_name" value="{{ video_name }}">
+            
+            
+            <!-- Safety Question -->
+            <label for="safety">Safety:</label><br>
+            <label>5 (Good)</label>
+            <input type="radio" id="safety" name="safety" value="5">
+            <label>4</label>
+            <input type="radio" id="safety" name="safety" value="4">
+            <label>3</label>
+            <input type="radio" id="safety" name="safety" value="3">
+            <label>2</label>
+            <input type="radio" id="safety" name="safety" value="2">
+            <label>1 (Bad)</label>
+            <input type="radio" id="safety" name="safety" value="1"><br><br>
+
+            <!-- Speed Question -->
+            <label for="speed">Speed:</label><br>
+            <label>5 (Good)</label>
+            <input type="radio" id="speed" name="speed" value="5">
+            <label>4</label>
+            <input type="radio" id="speed" name="speed" value="4">
+            <label>3</label>
+            <input type="radio" id="speed" name="speed" value="3">
+            <label>2</label>
+            <input type="radio" id="speed" name="speed" value="2">
+            <label>1 (Bad)</label>
+            <input type="radio" id="speed" name="speed" value="1"><br><br>
+
+            <!-- Convenience Question -->
+            <label for="convenience">Convenience:</label><br>
+            <label>5 (Good)</label>
+            <input type="radio" id="convenience" name="convenience" value="5">
+            <label>4</label>
+            <input type="radio" id="convenience" name="convenience" value="4">
+            <label>3</label>
+            <input type="radio" id="convenience" name="convenience" value="3">
+            <label>2</label>
+            <input type="radio" id="convenience" name="convenience" value="2">
+            <label>1 (Bad)</label>
+            <input type="radio" id="convenience" name="convenience" value="1"><br><br>
+
+            <!-- Hidden field to store comments collected during the video -->
+            <input type="hidden" id="commentsInput" name="comments">
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <script>
+        window.onload = function() {
+            var comments = JSON.parse(localStorage.getItem('comments') || '[]');  // Retrieve comments from local storage
+            document.getElementById('commentsInput').value = JSON.stringify(comments);  // Populate the hidden input with the comments
+            //localStorage.removeItem('comments');  // Optionally clear the comments from local storage
+        };
+    </script>
+
+</body>
+</html>

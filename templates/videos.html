@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Gallery</title>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('home') }}">Back to Home</a>
+        <h1>Video Gallery</h1>
+        <div class="video-tabs">
+            {% for video in videos %}
+                <div class="video-tab">
+                    <a href="{{ url_for('video_page', video_name=video) }}">{{ video.capitalize() }} Video</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

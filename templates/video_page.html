@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ video_name.capitalize() }} Video</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ video_name.capitalize() }} Video</h1>
+        <div class="video-wrapper">
+            <video id="videoPlayer" width="640" height="480" controls>
+                <source src="{{ url_for('serve_video', filename=video_name + '.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            
+        </div>
+    </div>
+
+    <script>
+       
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var videoPlayer = document.getElementById('videoPlayer');
+            var startTime;
+            var comments = []; // Array to store comments
+            console.log("Video player loaded");
+            // Event listener for video ending
+            videoPlayer.addEventListener('ended', function() {
+                console.log("Video ended, sending all comments...");
+                localStorage.setItem('comments', JSON.stringify(comments));
+                window.location.href = "{{ url_for('questionnaire_form', video_name=video_name) }}";
+            });
+
+            // Event listener for keydown to handle space bar interactions
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space' && !event.repeat) {
+                    event.preventDefault(); // Prevent the default action to avoid scrolling
+                    startTime = videoPlayer.currentTime; // Record start time on keydown
+                    videoPlayer.style.border = '5px solid red'; // Visual indication key is down
+                }
+            });
+
+            // Event listener for keyup to stop recording timestamps
+            document.addEventListener('keyup', function(event) {
+                if (event.code === 'Space') {
+                    var endTime = videoPlayer.currentTime; // Record end time on keyup
+                    console.log("Space key released, timestamp recording stopped");
+                    console.log("Timestamp recorded: ", startTime.toFixed(2), "-", endTime.toFixed(2));
+
+                    videoPlayer.style.border = 'none'; // Remove visual indication
+
+                    videoPlayer.pause(); // Pause the video
+                    var comment = prompt("Enter a comment for the timestamp " + endTime.toFixed(2) + " seconds:");
+                    console.log("Comment: ", comment);
+
+                    if (comment) {
+                        comments.push({
+                            time: startTime.toFixed(2) + " - " + endTime.toFixed(2),
+                            comment: comment
+                        });
+                        console.log("Comment added. There are now " + comments.length + " comments.");
+                    }
+
+                    videoPlayer.play(); // Resume the video
+                }
+            });
+
+
+
+            // Add event listener for window unload to handle logout
+            window.addEventListener('beforeunload', function(event) {
+                navigator.sendBeacon("{{ url_for('logout') }}");
+                console.log("User is logging out");
+            });
+        });
+    </script>
+</body>
+</html>
