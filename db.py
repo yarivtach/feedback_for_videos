@@ -7,24 +7,26 @@ class Database:
     def __init__(self):
         load_dotenv()
         mongo_uri = os.getenv('MONGO_URI')
-        print(f"\n---------Mongo URI: {mongo_uri}")
-        self.db = None
         try:
-            client = MongoClient(mongo_uri)
+            self.client = MongoClient(mongo_uri)
             # Ping the server to ensure the connection is alive
-            client.admin.command('ping')
+            self.client.admin.command('ping')
             db_name = mongo_uri.split('/')[-1].split('?')[0]
             print(f"Database name extracted: '{db_name}'")  # Debug print
             if not db_name:
                 raise ValueError("Database name is empty. Check your MONGO_URI.")
-            self.db = client[db_name]
+            self.db = self.client.get_database(db_name)
             print(f"Connected to MongoDB at {mongo_uri}, Database: {db_name}")
+            
         except errors.ConnectionFailure as e:
             logging.error("Failed to connect to MongoDB: Connection Failure", exc_info=True)
             raise e
         except Exception as e:
             logging.error("Failed to connect to MongoDB", exc_info=True)
             raise e
+
+    def get_collection(self, collection_name):
+        return self.db[collection_name]
 
     def insert_data(self, collection_name, data):
         if self.db is not None:

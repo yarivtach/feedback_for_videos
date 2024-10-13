@@ -7,11 +7,7 @@ from dotenv import load_dotenv
 from db import Database
 
 
-
-
-
-
-app = Flask(__name__) # it is a class
+app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Needed for session management
 load_dotenv()  # Load environment variables from a .env file
 
@@ -178,4 +174,5 @@ def save_answers_csv(user_email, video_name, safety, speed, convenience, time=No
         
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True) # this is used to run the application
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
