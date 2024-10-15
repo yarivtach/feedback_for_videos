@@ -188,4 +188,4 @@ def save_answers_csv(user_email, video_name, safety, speed, convenience, time=No
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=True, static_folder=static_folder, static_url_path='/static')
