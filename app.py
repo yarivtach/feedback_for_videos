@@ -110,8 +110,8 @@ def questionnaire_form():
 
 @app.route('/static/videos/<video_name>')
 def video_page(video_name):
-    return render_template('video_page.html', video_name=video_name)
-    # return send_from_directory(app.config['VIDEOS_FOLDER'], video_name)
+    # return render_template('video_page.html', video_name=video_name)
+    return send_from_directory(app.config['VIDEOS_FOLDER'], video_name)
 
 @app.route('/static/videos/<video_name>')
 def serve_video(filename):
