@@ -2,19 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2% 0;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 2%;
+        }
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2%;
+        }
+        .video-item {
+            flex-basis: calc(25% - 2%);
+            margin-bottom: 2%;
+            text-align: center;
+        }
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .video-thumbnail:hover {
+            transform: scale(1.05);
+        }
+        .video-title {
+            margin-top: 2%;
+            font-size: 1em;
+            word-wrap: break-word;
+        }
+        @media (max-width: 1024px) {
+            .video-item {
+                flex-basis: calc(33.333% - 2%);
+            }
+        }
+        @media (max-width: 768px) {
+            .video-item {
+                flex-basis: calc(50% - 2%);
+            }
+        }
+        @media (max-width: 480px) {
+            .video-item {
+                flex-basis: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <a href="{{ url_for('home') }}">Back to Home</a>
         <h1>Video Gallery</h1>
-        <div class="video-tabs">
+        {% if videos %}
+            <div class="video-gallery">
             {% for video in videos %}
-                <div class="video-tab">
-                    <a href="{{ url_for('video_page', video_name=video) }}">{{ video.capitalize() }} Video</a>
+                <div class="video-item">
+                    <a href="{{ url_for('video_page', video_name=video) }}">
+                        <img class="video-thumbnail" src="{{ url_for('static', filename='Videos/' + video|replace('.mp4', '.jpg')) }}" alt="{{ video }}">
+                        <p class="video-title">{{ video }}</p>
+                        <p>Debug URL: {{ url_for('serve_video', video_name=video) }}</p>
+                    </a>
                 </div>
             {% endfor %}
-        </div>
+            </div>
+        {% else %}
+            <p>No videos available.</p>
+        {% endif %}
     </div>
 </body>
 </html>

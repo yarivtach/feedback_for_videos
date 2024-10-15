@@ -1,14 +1,17 @@
 from pymongo import MongoClient, errors
 from dotenv import load_dotenv
 import logging
+import certifi
 import os
 
 class Database:
     def __init__(self):
         load_dotenv()
         mongo_uri = os.getenv('MONGO_URI')
+        self.client = MongoClient(mongo_uri, tlsCAFile=certifi.where()) # this is used to connect to the database for the first time
         try:
             self.client = MongoClient(mongo_uri)
+            
             # Ping the server to ensure the connection is alive
             self.client.admin.command('ping')
             db_name = mongo_uri.split('/')[-1].split('?')[0]

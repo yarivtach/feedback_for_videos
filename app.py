@@ -6,15 +6,20 @@ import os
 from dotenv import load_dotenv
 from db import Database
 
-
-app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
+static_folder = os.path.join(basedir, 'static')
+app = Flask(__name__, static_folder=static_folder)#), stat(message_spec=None))
 app.secret_key = 'your_secret_key'  # Needed for session management
 load_dotenv()  # Load environment variables from a .env file
+
+videos_folder = os.path.join(basedir, 'videos')
+app.config['VIDEOS_FOLDER'] = videos_folder
+
 
 #connect to the database
 print("Connecting to the database")
 db = Database()
-
+app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 VIDEOS_FOLDER = os.path.join(os.getcwd(), 'videos')
 app.config['VIDEOS_FOLDER'] = VIDEOS_FOLDER
 
@@ -71,12 +76,19 @@ def submit_questionnaire():
 
 @app.route('/video_gallery')
 def video_gallery():
-    videos = []
-    for filename in os.listdir(app.config['VIDEOS_FOLDER']):
-        if filename.endswith(('.mp4', '.avi', '.mov')):
-            videos.append(os.path.splitext(filename)[0])
+    videos_folder = os.path.join(app.static_folder, 'Videos')
+    print(f"Videos folder: {videos_folder}")
+    if not os.path.exists(videos_folder):
+        app.logger.error(f"Videos folder not found: {videos_folder}")
+        return "Videos folder not found", 404
+    
+    all_files = os.listdir(videos_folder)
+    videos = [f for f in all_files if f.endswith(('.mp4', '.avi', '.mov'))]
+    # for filename in os.listdir(videos_folder):
+    #     if filename.endswith(('.mp4', '.avi', '.mov')):
+    #         #videos.append(os.path.splitext(filename)[0]) 
+    #         videos.append(filename)
     return render_template('videos.html', videos=videos)
-
 
 
 
@@ -99,8 +111,9 @@ def questionnaire_form():
 @app.route('/video/<video_name>')
 def video_page(video_name):
     return render_template('video_page.html', video_name=video_name)
+    # return send_from_directory(app.config['VIDEOS_FOLDER'], video_name)
 
-@app.route('/videos/<path:filename>')
+@app.route('/video/<video_name>')
 def serve_video(filename):
     return send_from_directory(app.config['VIDEOS_FOLDER'], filename)
 
@@ -175,4 +188,4 @@ def save_answers_csv(user_email, video_name, safety, speed, convenience, time=No
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
