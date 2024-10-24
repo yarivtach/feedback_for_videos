@@ -153,8 +153,8 @@ def video_page(video_name):
 def list_videos():
     videos = {}
     try:
-        if not storage_client:
-            print("Storage client not initialized")
+        if not storage_client or not bucket:
+            print("storage client or bucket not initialized")
             return videos
         
         blobs = bucket.list_blobs() # blob is a file in the bucket

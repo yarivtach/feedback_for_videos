@@ -6,7 +6,7 @@ load_dotenv()
 
 def get_credentials():
     try:
-        # Get credentials from environment variable
+        # Base credentials dictionary
         creds_json = {
             "type": "service_account",
             "project_id": "citric-earth-439216-r8",
@@ -20,7 +20,12 @@ def get_credentials():
             "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/feedback-project%40citric-earth-439216-r8.iam.gserviceaccount.com",
             "universe_domain": "googleapis.com"
         }
-        
+
+        # Ensure private key is properly formatted
+        if not creds_json["private_key"].startswith("-----BEGIN PRIVATE KEY-----\n"):
+            print("Warning: Private key format might be incorrect")
+            
+        print("Credentials loaded successfully")
         return creds_json
             
     except Exception as e:
