@@ -1,6 +1,9 @@
 .env
-additional files
-*.pyc
+.additional files/
+*.pyc   
+credentials_single_line.txt
+
+
 
 # Render specific
 .render/
