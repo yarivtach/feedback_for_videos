@@ -1,9 +1,12 @@
 .env
 additional files/
+venv/
+env/
+venv
 
-*.pyc   
-credentials_single_line.txt
-convert_credentials.py
+*.pyc
+*.json
+*credentials*
 
 
 
