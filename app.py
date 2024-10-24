@@ -12,10 +12,24 @@ from db import Database
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
 
-
+def initialize_storage_client():
+    try:
+        if os.getenv('GOOGLE_CLOUD_CREDENTIALS'):
+            # For production (Render)
+            credentials_info = json.loads(os.getenv('GOOGLE_CLOUD_CREDENTIALS'))
+            storage_client = storage.Client.from_service_account_info(credentials_info)
+        else:
+            # For local development
+            google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+            storage_client = storage.Client.from_service_account_json(google_key)
+        
+        return storage_client
+    except Exception as e:
+        print(f"Error initializing storage client: {e}")
+        return None
 bucket_name = 'feedbackbucket14'
 google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-storage_client = storage.Client.from_service_account_json(google_key)
+storage_client = initialize_storage_client()
 bucket = storage_client.bucket(bucket_name)
 
 app = Flask(__name__, static_folder='static') # the change to 'static' is to fetch the static folder from the root of the project
@@ -88,8 +102,14 @@ def submit_questionnaire():
 def video_gallery():
     if not session.get('user_email'):
         return redirect(url_for('home'))
-    videos = list_videos()
-    return render_template('videos.html', videos=videos, bucket_name=bucket_name)
+    try:
+        videos = list_videos()
+        if not videos and not storage_client:
+            return "Error connecting to storage", 500
+        return render_template('videos.html', videos=videos, bucket_name=bucket_name)
+    except Exception as e:
+        print(f"Error in video gallery: {e}")
+        return "An error occurred", 500
     
 
 def convert_comments_to_json(original_comment):
@@ -119,16 +139,23 @@ def video_page(video_name):
 
 def list_videos():
     videos = {}
-    blobs = bucket.list_blobs() # blob is a file in the bucket
-    for blob in blobs:
-        if blob.name.endswith('.mp4'):
-            video_id = os.path.splitext(blob.name)[0]
-            videos[video_id] = {
-                'title': blob.name.replace('_', ' ').replace('.mp4', ''),  # Clean up the title
-                'url': f"https://storage.googleapis.com/{bucket_name}/{blob.name}",
-                # 'thumbnail': f"https://storage.googleapis.com/{bucket_name}/{blob.name.replace('.mp4', '.jpg')}"
-            }
-            print(f"Video added: {video_id} , {videos[video_id]['url']}")
+    try:
+        if not storage_client:
+            print("Storage client not initialized")
+            return videos
+        
+        blobs = bucket.list_blobs() # blob is a file in the bucket
+        for blob in blobs:
+            if blob.name.endswith('.mp4'):
+                video_id = os.path.splitext(blob.name)[0]
+                videos[video_id] = {
+                    'title': blob.name.replace('_', ' ').replace('.mp4', ''),  # Clean up the title
+                    'url': f"https://storage.googleapis.com/{bucket_name}/{blob.name}",
+                    # 'thumbnail': f"https://storage.googleapis.com/{bucket_name}/{blob.name.replace('.mp4', '.jpg')}"
+                }
+                print(f"Video added: {video_id} , {videos[video_id]['url']}")
+    except Exception as e:
+        print(f"Error listing videos: {e}")
     return videos
 
 
@@ -182,6 +209,7 @@ def thank_you():
 def logout():
     session.pop('user_email', None)
     return '', 204  # Return no content for sendBeacon**
+
 
 
 # Function to save answers to a CSV file

@@ -1,2 +1,7 @@
 .env
 additional files
+*.pyc
+
+# Render specific
+.render/
+
