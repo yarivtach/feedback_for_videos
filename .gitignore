@@ -2,6 +2,9 @@
 credentials_single_line.txt
 credentials.json
 .additional files/
+.\additional files\citric-earth-439216-r8-d0cb6a2b8da7.json
+.\additional files\google_cloud_key.json
+
 .env
 *credentials*
 *.key
