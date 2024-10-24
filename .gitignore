@@ -1,3 +1,5 @@
+credentials_single_line.txt
+credentials.json
 .env
 additional files/
 venv/
@@ -13,4 +15,7 @@ venv
 
 # Render specific
 .render/
+
+
+
 
