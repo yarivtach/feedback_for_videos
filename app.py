@@ -9,17 +9,20 @@ import json
 import os
 from dotenv import load_dotenv
 from db import Database
+import convert_credentials
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
 
 def initialize_storage_client():
     try:
-        if os.getenv('GOOGLE_CLOUD_CREDENTIALS'):
-            # For production (Render)
-            credentials_info = json.loads(os.getenv('GOOGLE_CLOUD_CREDENTIALS'))
-            storage_client = storage.Client.from_service_account_info(credentials_info)
+        credentials = convert_credentials.get_credentials()
+        if credentials:
+            storage_client = storage.Client.from_service_account_info(credentials)
+            print("Successfully initialized storage client")
+            return storage_client
         else:
+            print("No credentials found")
             # For local development
             google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
             storage_client = storage.Client.from_service_account_json(google_key)
@@ -28,14 +31,20 @@ def initialize_storage_client():
     except Exception as e:
         print(f"Error initializing storage client: {e}")
         return None
-bucket_name = 'feedbackbucket14'
-google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-storage_client = initialize_storage_client()
-bucket = storage_client.bucket(bucket_name=bucket_name)
+    
 
 app = Flask(__name__, static_folder='static') # the change to 'static' is to fetch the static folder from the root of the project
 app.secret_key = 'your_secret_key'  # Needed for session management
 load_dotenv()  # Load environment variables from a .env file
+
+bucket_name = 'feedbackbucket14'
+google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+storage_client = initialize_storage_client()
+if storage_client:
+    bucket = storage_client.bucket(bucket_name=bucket_name)
+else:
+    print("Storage client not initialized")
+    bucket = None
 
 videos_folder = os.path.join(basedir, 'videos')
 app.config['VIDEOS_FOLDER'] = videos_folder
@@ -103,6 +112,9 @@ def submit_questionnaire():
 def video_gallery():
     if not session.get('user_email'):
         return redirect(url_for('home'))
+    if not storage_client or not bucket:
+        print("Storage client not available")
+        return "Storage service unavailable", 503
     try:
         videos = list_videos()
         if not videos and not storage_client:
