@@ -1,7 +1,10 @@
 .env
-.additional files/
+additional files/
+
 *.pyc   
 credentials_single_line.txt
+convert_credentials.py
+
 
 
 
