@@ -1,17 +1,19 @@
+# Credentials
 credentials_single_line.txt
 credentials.json
+.additional files/
 .env
-additional files/
+*credentials*
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment
 venv/
 env/
-venv
-
-*.pyc
-*.json
-*credentials*
-
-
-
 
 # Render specific
 .render/

@@ -1,0 +1,307 @@
+[33mcommit f975e7b480ad825d1fb6d8492b0911dd1fd088bb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Yariv Tachnai <yarivtachnai14@gmail.com>
+Date:   Thu Oct 24 15:36:36 2024 +0300
+
+    Remove sensitive files and update gitignore
+
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex 7b58ccf..9930462 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,3 +1,5 @@[m
+[32m+[m[32mcredentials_single_line.txt[m
+[32m+[m[32mcredentials.json[m
+ .env[m
+ additional files/[m
+ venv/[m
+[36m@@ -14,3 +16,6 @@[m [mvenv[m
+ # Render specific[m
+ .render/[m
+ [m
+[41m+[m
+[41m+[m
+[41m+[m
+
+[33mcommit 1c0442762d1eb9b25b0633b5c4cc203d0461c2ed[m
+Author: Yariv Tachnai <yarivtachnai14@gmail.com>
+Date:   Thu Oct 24 15:33:20 2024 +0300
+
+    Remove sensitive files and update gitignore
+
+[1mdiff --git a/credentials_single_line.txt b/credentials_single_line.txt[m
+[1mdeleted file mode 100644[m
+[1mindex a0b29e4..0000000[m
+[1m--- a/credentials_single_line.txt[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-{"type": "service_account", "project_id": "citric-earth-439216-r8", "private_key_id": "d0cb6a2b8da78a48684f9894d6f5e9233f06a79d", "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDP5RPMO1i9I1OL\nS7Z02bulvVcssYXtN+Mqnp1ULSHeV9LsAD/6Yd2cAt4001g3AXuN+N+rfgX+eRAf\nmSH3Y/K1SbPvmROuuaITgaD2zPTOv4ZSlyGdZ+ac4qhOn7kjgSMXdD5JhQ0/kVUj\npBlrdfQek5wCq8kH085pHxtnCcwBia6SBjQt0jGbav0KmT5tYU/mZe/NY1GrZ38h\ntZQjKV6YPfqn1Su4cniNrK7xdr55g1nqWHxonapC9AKIQ1SdAp1Op3CCO5eboiS7\nEWwro9NVFrbkQVUn4FDtFH3glGRZ51/+ZCx4R/Yugn0u6Se8NU38ikcxAjVUp3Tu\nlcqJ0+xtAgMBAAECggEABmS9pKDInFx7Q8Pq0xIlJrY5eZrmCwMWfeeN4BpZOczK\npE5nqUwcNCGUctxzEJH/mkCmpFAGYCqZ99bOSBzvSGsBWSOEivGTjfUFHcH032zd\ndSnHs18QJRAFbBGWcISWrzB4f+tTGnreOu/fhkIE5XHVsPFWh+KYLPxza8pN11g1\n59xbBp5EgrTWC8dZJX2LXdyTdRKNa+RpqIYXUKVfrgFbqbSSV7bdsrP9Sfqyd5VE\ng4KFOsGai5G2mPG1FPjlXS8pRwQgTO6Y5HyYJ0LYp2rw8P//A4LkUQDXEEuq+m7P\ns1OODdSnEvoXibx6Gc2NtxW22mG2s8ru45REiS5jgQKBgQD3wxznSYq79cPolGTG\nH8W4VjRDpzFKJQxJI6HtNJN+A3ipuKABQrzv0Y8uG0Z6Qfo8Xy2Kh5YL+2O1n0Px\n2sb8+k7ctMrEXNJ+eNmAX8gaSzg6dk99X152eauB92xdYPJ6XdrLLvRf/5HBkojn\n60uieTOKkJTZqbWp7SFSge9awQKBgQDWzp/F0F0pse3b7NnakftAwpAhru0wDMKI\nHbxJKhF8UVIXc6e6VQojPZV4dSZ+OjyTgYKeZQUqrGGZ3JMqRwfTICOuIr50e/tt\nud5ruCvA4UaHnUQVcsifdyMd7wh+GbCb8McwNZzjAuiJ17C8AHXklsf6qV+Q8zL+\nEHyFDnGYrQKBgQDmZ+ovJHMCDLFdTvLQVKe4n2IHMCpkO0PLmHlzcBtharUBkJIr\n2fZ+RzGRvQezljuxfQmK9EATcHrvYeb7uWqnw9cm5HJUXcXam2QZP/mEikMGCxQt\nEU11e/yE5qU9yXR1W2am4UmdJLxVeYIbuvMhavkFeSMTsAEiv0Tnx7HhgQKBgQC0\nNVJa/Qw7f5dCSvkVYiT8Vn3elEdOaVYGJZQheVaECiEppZCQROmlWPP9w6KQgUDy\nqtMvGSb1fvq+vwsDi+WnnK3yWBmZ1a3Ahw9vJWonfZbTDP/iUpK3HZbrdO6WA+1j\nVeN1sXS2CmmVwsr1XhmJtWl+A/w1uaIM/T3Jzq1EXQKBgAnVC8Az53AVp/qRhRI/\nzQ+Uf4nMPWaRizgjR9FPGt3NYIpTGu36Fu8tsPE0i/pVNGIDUix3mkPgPaLlESeQ\n05CxWpl8fVlHpRSYr8r40ia/ptJ4HNOrNlpymwHz98EGOxqeJ4b7eLNggADrhzE6\ny8VH1zmfDIk0f8q4P/B3KbbS\n-----END PRIVATE KEY-----\n", "client_email": "feedback-project@citric-earth-439216-r8.iam.gserviceaccount.com", "client_id": "106025898490615963937", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/feedback-project%40citric-earth-439216-r8.iam.gserviceaccount.com", "universe_domain": "googleapis.com"}[m
+\ No newline at end of file[m
+
+[33mcommit 2796d9c3df3d24e6ef046a1b369161940730b377[m
+Author: Yariv Tachnai <yarivtachnai14@gmail.com>
+Date:   Thu Oct 24 15:31:49 2024 +0300
+
+    Remove sensitive information
+
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex d05ceb1..7b58ccf 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,9 +1,12 @@[m
+ .env[m
+ additional files/[m
+[32m+[m[32mvenv/[m
+[32m+[m[32menv/[m
+[32m+[m[32mvenv[m
+ [m
+[31m-*.pyc   [m
+[31m-credentials_single_line.txt[m
+[31m-convert_credentials.py[m
+[32m+[m[32m*.pyc[m
+[32m+[m[32m*.json[m
+[32m+[m[32m*credentials*[m
+ [m
+ [m
+ [m
+[1mdiff --git a/render.yaml b/render.yaml[m
+[1mindex 9622533..761e797 100644[m
+[1m--- a/render.yaml[m
+[1m+++ b/render.yaml[m
+[36m@@ -1,6 +1,6 @@[m
+ services:[m
+   - type: web[m
+[31m-    name: your-app-name[m
+[32m+[m[32m    name: app-feedback[m
+     env: python[m
+     buildCommand: pip install -r requirements.txt[m
+     startCommand: gunicorn app:app[m
+
+[33mcommit b55d4f86233809cdd732a03bd38d3ab810e502ce[m
+Author: Yariv Tachnai <yarivtachnai14@gmail.com>
+Date:   Thu Oct 24 15:29:01 2024 +0300
+
+    Remove sensitive information
+
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex a869733..d05ceb1 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,7 +1,10 @@[m
+ .env[m
+[31m-.additional files/[m
+[32m+[m[32madditional files/[m
+[32m+[m
+ *.pyc   [m
+ credentials_single_line.txt[m
+[32m+[m[32mconvert_credentials.py[m
+[32m+[m
+ [m
+ [m
+ [m
+
+[33mcommit c05225db1db92f7b30744a393c5b8cc2bb06942f[m
+Author: Yariv Tachnai <yarivtachnai14@gmail.com>
+Date:   Thu Oct 24 15:25:18 2024 +0300
+
+    Work with url
+
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex fa36a59..a869733 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,6 +1,9 @@[m
+ .env[m
+[31m-additional files[m
+[31m-*.pyc[m
+[32m+[m[32m.additional files/[m
+[32m+[m[32m*.pyc[m[41m   [m
+[32m+[m[32mcredentials_single_line.txt[m
+[32m+[m
+[32m+[m
+ [m
+ # Render specific[m
+ .render/[m
+[1mdiff --git a/additional files/citric-earth-439216-r8-d0cb6a2b8da7.json b/additional files/citric-earth-439216-r8-d0cb6a2b8da7.json[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e083fad[m
+[1m--- /dev/null[m
+[1m+++ b/additional files/citric-earth-439216-r8-d0cb6a2b8da7.json[m	
+[36m@@ -0,0 +1,13 @@[m
+[32m+[m[32m{[m
+[32m+[m[32m  "type": "service_account",[m
+[32m+[m[32m  "project_id": "citric-earth-439216-r8",[m
+[32m+[m[32m  "private_key_id": "d0cb6a2b8da78a48684f9894d6f5e9233f06a79d",[m
+[32m+[m[32m  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDP5RPMO1i9I1OL\nS7Z02bulvVcssYXtN+Mqnp1ULSHeV9LsAD/6Yd2cAt4001g3AXuN+N+rfgX+eRAf\nmSH3Y/K1SbPvmROuuaITgaD2zPTOv4ZSlyGdZ+ac4qhOn7kjgSMXdD5JhQ0/kVUj\npBlrdfQek5wCq8kH085pHxtnCcwBia6SBjQt0jGbav0KmT5tYU/mZe/NY1GrZ38h\ntZQjKV6YPfqn1Su4cniNrK7xdr55g1nqWHxonapC9AKIQ1SdAp1Op3CCO5eboiS7\nEWwro9NVFrbkQVUn4FDtFH3glGRZ51/+ZCx4R/Yugn0u6Se8NU38ikcxAjVUp3Tu\nlcqJ0+xtAgMBAAECggEABmS9pKDInFx7Q8Pq0xIlJrY5eZrmCwMWfeeN4BpZOczK\npE5nqUwcNCGUctxzEJH/mkCmpFAGYCqZ99bOSBzvSGsBWSOEivGTjfUFHcH032zd\ndSnHs18QJRAFbBGWcISWrzB4f+tTGnreOu/fhkIE5XHVsPFWh+KYLPxza8pN11g1\n59xbBp5EgrTWC8dZJX2LXdyTdRKNa+RpqIYXUKVfrgFbqbSSV7bdsrP9Sfqyd5VE\ng4KFOsGai5G2mPG1FPjlXS8pRwQgTO6Y5HyYJ0LYp2rw8P//A4LkUQDXEEuq+m7P\ns1OODdSnEvoXibx6Gc2NtxW22mG2s8ru45REiS5jgQKBgQD3wxznSYq79cPolGTG\nH8W4VjRDpzFKJQxJI6HtNJN+A3ipuKABQrzv0Y8uG0Z6Qfo8Xy2Kh5YL+2O1n0Px\n2sb8+k7ctMrEXNJ+eNmAX8gaSzg6dk99X152eauB92xdYPJ6XdrLLvRf/5HBkojn\n60uieTOKkJTZqbWp7SFSge9awQKBgQDWzp/F0F0pse3b7NnakftAwpAhru0wDMKI\nHbxJKhF8UVIXc6e6VQojPZV4dSZ+OjyTgYKeZQUqrGGZ3JMqRwfTICOuIr50e/tt\nud5ruCvA4UaHnUQVcsifdyMd7wh+GbCb8McwNZzjAuiJ17C8AHXklsf6qV+Q8zL+\nEHyFDnGYrQKBgQDmZ+ovJHMCDLFdTvLQVKe4n2IHMCpkO0PLmHlzcBtharUBkJIr\n2fZ+RzGRvQezljuxfQmK9EATcHrvYeb7uWqnw9cm5HJUXcXam2QZP/mEikMGCxQt\nEU11e/yE5qU9yXR1W2am4UmdJLxVeYIbuvMhavkFeSMTsAEiv0Tnx7HhgQKBgQC0\nNVJa/Qw7f5dCSvkVYiT8Vn3elEdOaVYGJZQheVaECiEppZCQROmlWPP9w6KQgUDy\nqtMvGSb1fvq+vwsDi+WnnK3yWBmZ1a3Ahw9vJWonfZbTDP/iUpK3HZbrdO6WA+1j\nVeN1sXS2CmmVwsr1XhmJtWl+A/w1uaIM/T3Jzq1EXQKBgAnVC8Az53AVp/qRhRI/\nzQ+Uf4nMPWaRizgjR9FPGt3NYIpTGu36Fu8tsPE0i/pVNGIDUix3mkPgPaLlESeQ\n05CxWpl8fVlHpRSYr8r40ia/ptJ4HNOrNlpymwHz98EGOxqeJ4b7eLNggADrhzE6\ny8VH1zmfDIk0f8q4P/B3KbbS\n-----END PRIVATE KEY-----\n",[m
+[32m+[m[32m  "client_email": "feedback-project@citric-earth-439216-r8.iam.gserviceaccount.com",[m
+[32m+[m[32m  "client_id": "106025898490615963937",[m
+[32m+[m[32m  "auth_uri": "https://accounts.google.com/o/oauth2/auth",[m
+[32m+[m[32m  "token_uri": "https://oauth2.googleapis.com/token",[m
+[32m+[m[32m  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",[m
+[32m+[m[32m  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/feedback-project%40citric-earth-439216-r8.iam.gserviceaccount.com",[m
+[32m+[m[32m  "universe_domain": "googleapis.com"[m
+[32m+[m[32m}[m
+[1mdiff --git a/additional files/google_cloud_key.json b/additional files/google_cloud_key.json[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e083fad[m
+[1m--- /dev/null[m
+[1m+++ b/additional files/google_cloud_key.json[m	
+[36m@@ -0,0 +1,13 @@[m
+[32m+[m[32m{[m
+[32m+[m[32m  "type": "service_account",[m
+[32m+[m[32m  "project_id": "citric-earth-439216-r8",[m
+[32m+[m[32m  "private_key_id": "d0cb6a2b8da78a48684f9894d6f5e9233f06a79d",[m
+[32m+[m[32m  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDP5RPMO1i9I1OL\nS7Z02bulvVcssYXtN+Mqnp1ULSHeV9LsAD/6Yd2cAt4001g3AXuN+N+rfgX+eRAf\nmSH3Y/K1SbPvmROuuaITgaD2zPTOv4ZSlyGdZ+ac4qhOn7kjgSMXdD5JhQ0/kVUj\npBlrdfQek5wCq8kH085pHxtnCcwBia6SBjQt0jGbav0KmT5tYU/mZe/NY1GrZ38h\ntZQjKV6YPfqn1Su4cniNrK7xdr55g1nqWHxonapC9AKIQ1SdAp1Op3CCO5eboiS7\nEWwro9NVFrbkQVUn4FDtFH3glGRZ51/+ZCx4R/Yugn0u6Se8NU38ikcxAjVUp3Tu\nlcqJ0+xtAgMBAAECggEABmS9pKDInFx7Q8Pq0xIlJrY5eZrmCwMWfeeN4BpZOczK\npE5nqUwcNCGUctxzEJH/mkCmpFAGYCqZ99bOSBzvSGsBWSOEivGTjfUFHcH032zd\ndSnHs18QJRAFbBGWcISWrzB4f+tTGnreOu/fhkIE5XHVsPFWh+KYLPxza8pN11g1\n59xbBp5EgrTWC8dZJX2LXdyTdRKNa+RpqIYXUKVfrgFbqbSSV7bdsrP9Sfqyd5VE\ng4KFOsGai5G2mPG1FPjlXS8pRwQgTO6Y5HyYJ0LYp2rw8P//A4LkUQDXEEuq+m7P\ns1OODdSnEvoXibx6Gc2NtxW22mG2s8ru45REiS5jgQKBgQD3wxznSYq79cPolGTG\nH8W4VjRDpzFKJQxJI6HtNJN+A3ipuKABQrzv0Y8uG0Z6Qfo8Xy2Kh5YL+2O1n0Px\n2sb8+k7ctMrEXNJ+eNmAX8gaSzg6dk99X152eauB92xdYPJ6XdrLLvRf/5HBkojn\n60uieTOKkJTZqbWp7SFSge9awQKBgQDWzp/F0F0pse3b7NnakftAwpAhru0wDMKI\nHbxJKhF8UVIXc6e6VQojPZV4dSZ+OjyTgYKeZQUqrGGZ3JMqRwfTICOuIr50e/tt\nud5ruCvA4UaHnUQVcsifdyMd7wh+GbCb8McwNZzjAuiJ17C8AHXklsf6qV+Q8zL+\nEHyFDnGYrQKBgQDmZ+ovJHMCDLFdTvLQVKe4n2IHMCpkO0PLmHlzcBtharUBkJIr\n2fZ+RzGRvQezljuxfQmK9EATcHrvYeb7uWqnw9cm5HJUXcXam2QZP/mEikMGCxQt\nEU11e/yE5qU9yXR1W2am4UmdJLxVeYIbuvMhavkFeSMTsAEiv0Tnx7HhgQKBgQC0\nNVJa/Qw7f5dCSvkVYiT8Vn3elEdOaVYGJZQheVaECiEppZCQROmlWPP9w6KQgUDy\nqtMvGSb1fvq+vwsDi+WnnK3yWBmZ1a3Ahw9vJWonfZbTDP/iUpK3HZbrdO6WA+1j\nVeN1sXS2CmmVwsr1XhmJtWl+A/w1uaIM/T3Jzq1EXQKBgAnVC8Az53AVp/qRhRI/\nzQ+Uf4nMPWaRizgjR9FPGt3NYIpTGu36Fu8tsPE0i/pVNGIDUix3mkPgPaLlESeQ\n05CxWpl8fVlHpRSYr8r40ia/ptJ4HNOrNlpymwHz98EGOxqeJ4b7eLNggADrhzE6\ny8VH1zmfDIk0f8q4P/B3KbbS\n-----END PRIVATE KEY-----\n",[m
+[32m+[m[32m  "client_email": "feedback-project@citric-earth-439216-r8.iam.gserviceaccount.com",[m
+[32m+[m[32m  "client_id": "106025898490615963937",[m
+[32m+[m[32m  "auth_uri": "https://accounts.google.com/o/oauth2/auth",[m
+[32m+[m[32m  "token_uri": "https://oauth2.googleapis.com/token",[m
+[32m+[m[32m  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",[m
+[32m+[m[32m  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/feedback-project%40citric-earth-439216-r8.iam.gserviceaccount.com",[m
+[32m+[m[32m  "universe_domain": "googleapis.com"[m
+[32m+[m[32m}[m
+
+[33mcommit 7325f8ec32249983349b48782ad4cf84d8706b94[m
+Author: Yariv Tachnai <yarivtachnai14@gmail.com>
+Date:   Thu Oct 24 15:23:35 2024 +0300
+
+    Work with url
+
+[1mdiff --git a/app.py b/app.py[m
+[1mindex 813c09c..102e86d 100644[m
+[1m--- a/app.py[m
+[1m+++ b/app.py[m
+[36m@@ -1,5 +1,6 @@[m
+ from flask import Flask, jsonify, render_template, request, redirect, session, url_for, send_from_directory[m
+ import csv[m
+[32m+[m[32mimport convert_credentials[m
+ from google.cloud import storage[m
+ from google.auth.transport.requests import Request[m
+ import datetime[m
+[36m@@ -30,7 +31,7 @@[m [mdef initialize_storage_client():[m
+ bucket_name = 'feedbackbucket14'[m
+ google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')[m
+ storage_client = initialize_storage_client()[m
+[31m-bucket = storage_client.bucket(bucket_name)[m
+[32m+[m[32mbucket = storage_client.bucket(bucket_name=bucket_name)[m
+ [m
+ app = Flask(__name__, static_folder='static') # the change to 'static' is to fetch the static folder from the root of the project[m
+ app.secret_key = 'your_secret_key'  # Needed for session management[m
+[1mdiff --git a/convert_credentials.py b/convert_credentials.py[m
+[1mindex 8f64150..a200d0d 100644[m
+[1m--- a/convert_credentials.py[m
+[1m+++ b/convert_credentials.py[m
+[36m@@ -1,9 +1,13 @@[m
+ import json[m
+ [m
+ # Read the JSON file[m
+[31m-with open('your-credentials.json', 'r') as f:[m
+[32m+[m[32mwith open('D:/BGU UNIVERSITY/PROJECT/additional files/google_cloud_key.json', 'r') as f:[m
+     credentials = json.load(f)[m
+ [m
+[31m-# Convert to single line[m
+[31m-single_line = json.dumps(credentials)[m
+[31m-print(single_line)[m
+[32m+[m[32m# Convert to single line and save to a file[m
+[32m+[m[32mwith open('credentials_single_line.txt', 'w') as f:[m
+[32m+[m[32m    f.write(json.dumps(credentials))[m
+[32m+[m
+[32m+[m[32m# Also print to console[m
+[32m+[m[32mprint("Your credentials in single line format:")[m
+[32m+[m[32mprint(json.dumps(credentials))[m
+[1mdiff --git a/credentials_single_line.txt b/credentials_single_line.txt[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a0b29e4[m
+[1m--- /dev/null[m
+[1m+++ b/credentials_single_line.txt[m
+[36m@@ -0,0 +1 @@[m
+[32m+[m[32m{"type": "service_account", "project_id": "citric-earth-439216-r8", "private_key_id": "d0cb6a2b8da78a48684f9894d6f5e9233f06a79d", "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDP5RPMO1i9I1OL\nS7Z02bulvVcssYXtN+Mqnp1ULSHeV9LsAD/6Yd2cAt4001g3AXuN+N+rfgX+eRAf\nmSH3Y/K1SbPvmROuuaITgaD2zPTOv4ZSlyGdZ+ac4qhOn7kjgSMXdD5JhQ0/kVUj\npBlrdfQek5wCq8kH085pHxtnCcwBia6SBjQt0jGbav0KmT5tYU/mZe/NY1GrZ38h\ntZQjKV6YPfqn1Su4cniNrK7xdr55g1nqWHxonapC9AKIQ1SdAp1Op3CCO5eboiS7\nEWwro9NVFrbkQVUn4FDtFH3glGRZ51/+ZCx4R/Yugn0u6Se8NU38ikcxAjVUp3Tu\nlcqJ0+xtAgMBAAECggEABmS9pKDInFx7Q8Pq0xIlJrY5eZrmCwMWfeeN4BpZOczK\npE5nqUwcNCGUctxzEJH/mkCmpFAGYCqZ99bOSBzvSGsBWSOEivGTjfUFHcH032zd\ndSnHs18QJRAFbBGWcISWrzB4f+tTGnreOu/fhkIE5XHVsPFWh+KYLPxza8pN11g1\n59xbBp5EgrTWC8dZJX2LXdyTdRKNa+RpqIYXUKVfrgFbqbSSV7bdsrP9Sfqyd5VE\ng4KFOsGai5G2mPG1FPjlXS8pRwQgTO6Y5HyYJ0LYp2rw8P//A4LkUQDXEEuq+m7P\ns1OODdSnEvoXibx6Gc2NtxW22mG2s8ru45REiS5jgQKBgQD3wxznSYq79cPolGTG\nH8W4VjRDpzFKJQxJI6HtNJN+A3ipuKABQrzv0Y8uG0Z6Qfo8Xy2Kh5YL+2O1n0Px\n2sb8+k7ctMrEXNJ+eNmAX8gaSzg6dk99X152eauB92xdYPJ6XdrLLvRf/5HBkojn\n60uieTOKkJTZqbWp7SFSge9awQKBgQDWzp/F0F0pse3b7NnakftAwpAhru0wDMKI\nHbxJKhF8UVIXc6e6VQojPZV4dSZ+OjyTgYKeZQUqrGGZ3JMqRwfTICOuIr50e/tt\nud5ruCvA4UaHnUQVcsifdyMd7wh+GbCb8McwNZzjAuiJ17C8AHXklsf6qV+Q8zL+\nEHyFDnGYrQKBgQDmZ+ovJHMCDLFdTvLQVKe4n2IHMCpkO0PLmHlzcBtharUBkJIr\n2fZ+RzGRvQezljuxfQmK9EATcHrvYeb7uWqnw9cm5HJUXcXam2QZP/mEikMGCxQt\nEU11e/yE5qU9yXR1W2am4UmdJLxVeYIbuvMhavkFeSMTsAEiv0Tnx7HhgQKBgQC0\nNVJa/Qw7f5dCSvkVYiT8Vn3elEdOaVYGJZQheVaECiEppZCQROmlWPP9w6KQgUDy\nqtMvGSb1fvq+vwsDi+WnnK3yWBmZ1a3Ahw9vJWonfZbTDP/iUpK3HZbrdO6WA+1j\nVeN1sXS2CmmVwsr1XhmJtWl+A/w1uaIM/T3Jzq1EXQKBgAnVC8Az53AVp/qRhRI/\nzQ+Uf4nMPWaRizgjR9FPGt3NYIpTGu36Fu8tsPE0i/pVNGIDUix3mkPgPaLlESeQ\n05CxWpl8fVlHpRSYr8r40ia/ptJ4HNOrNlpymwHz98EGOxqeJ4b7eLNggADrhzE6\ny8VH1zmfDIk0f8q4P/B3KbbS\n-----END PRIVATE KEY-----\n", "client_email": "feedback-project@citric-earth-439216-r8.iam.gserviceaccount.com", "client_id": "106025898490615963937", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/feedback-project%40citric-earth-439216-r8.iam.gserviceaccount.com", "universe_domain": "googleapis.com"}[m
+\ No newline at end of file[m
+
+[33mcommit af466ef4cb5ca6fe07b2d61735e1b7a5b7e7afa8[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Yariv Tachnai <yarivtachnai14@gmail.com>
+Date:   Thu Oct 24 15:02:35 2024 +0300
+
+    Work with url
+
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex f23cd27..fa36a59 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,2 +1,7 @@[m
+ .env[m
+ additional files[m
+[32m+[m[32m*.pyc[m
+[32m+[m
+[32m+[m[32m# Render specific[m
+[32m+[m[32m.render/[m
+[41m+[m
+[1mdiff --git a/app.py b/app.py[m
+[1mindex fa674c8..813c09c 100644[m
+[1m--- a/app.py[m
+[1m+++ b/app.py[m
+[36m@@ -12,10 +12,24 @@[m [mfrom db import Database[m
+ basedir = os.path.abspath(os.path.dirname(__file__))[m
+ static_folder = os.path.join(basedir, 'static')[m
+ [m
+[31m-[m
+[32m+[m[32mdef initialize_storage_client():[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        if os.getenv('GOOGLE_CLOUD_CREDENTIALS'):[m
+[32m+[m[32m            # For production (Render)[m
+[32m+[m[32m            credentials_info = json.loads(os.getenv('GOOGLE_CLOUD_CREDENTIALS'))[m
+[32m+[m[32m            storage_client = storage.Client.from_service_account_info(credentials_info)[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            # For local development[m
+[32m+[m[32m            google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')[m
+[32m+[m[32m            storage_client = storage.Client.from_service_account_json(google_key)[m
+[32m+[m[41m        [m
+[32m+[m[32m        return storage_client[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        print(f"Error initializing storage client: {e}")[m
+[32m+[m[32m        return None[m
+ bucket_name = 'feedbackbucket14'[m
+ google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')[m
+[31m-storage_client = storage.Client.from_service_account_json(google_key)[m
+[32m+[m[32mstorage_client = initialize_storage_client()[m
+ bucket = storage_client.bucket(bucket_name)[m
+ [m
+ app = Flask(__name__, static_folder='static') # the change to 'static' is to fetch the static folder from the root of the project[m
+[36m@@ -88,8 +102,14 @@[m [mdef submit_questionnaire():[m
+ def video_gallery():[m
+     if not session.get('user_email'):[m
+         return redirect(url_for('home'))[m
+[31m-    videos = list_videos()[m
+[31m-    return render_template('videos.html', videos=videos, bucket_name=bucket_name)[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        videos = list_videos()[m
+[32m+[m[32m        if not videos and not storage_client:[m
+[32m+[m[32m            return "Error connecting to storage", 500[m
+[32m+[m[32m        return render_template('videos.html', videos=videos, bucket_name=bucket_name)[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        print(f"Error in video gallery: {e}")[m
+[32m+[m[32m        return "An error occurred", 500[m
+     [m
+ [m
+ def convert_comments_to_json(original_comment):[m
+[36m@@ -119,16 +139,23 @@[m [mdef video_page(video_name):[m
+ [m
+ def list_videos():[m
+     videos = {}[m
+[31m-    blobs = bucket.list_blobs() # blob is a file in the bucket[m
+[31m-    for blob in blobs:[m
+[31m-        if blob.name.endswith('.mp4'):[m
+[31m-            video_id = os.path.splitext(blob.name)[0][m
+[31m-            videos[video_id] = {[m
+[31m-                'title': blob.name.replace('_', ' ').replace('.mp4', ''),  # Clean up the title[m
+[31m-                'url': f"https://storage.googleapis.com/{bucket_name}/{blob.name}",[m
+[31m-                # 'thumbnail': f"https://storage.googleapis.com/{bucket_name}/{blob.name.replace('.mp4', '.jpg')}"[m
+[31m-            }[m
+[31m-            print(f"Video added: {video_id} , {videos[video_id]['url']}")[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        if not storage_client:[m
+[32m+[m[32m            print("Storage client not initialized")[m
+[32m+[m[32m            return videos[m
+[32m+[m[41m        [m
+[32m+[m[32m        blobs = bucket.list_blobs() # blob is a file in the bucket[m
+[32m+[m[32m        for blob in blobs:[m
+[32
