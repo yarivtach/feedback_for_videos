@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ video_name.capitalize() }} Video</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ video.title.capitalize() }} Video</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
         #commentBox {
@@ -26,10 +27,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>{{ video_name.capitalize() }} Video</h1>
+        <h1>{{ video.title.capitalize() }} Video</h1>
         <div class="video-wrapper">
             <video id="videoPlayer" width="640" height="480" controls>
-                <source src="{{ url_for('static', filename='Videos/' + video_name) }}" type="video/mp4">
+                <source src="{{ video['url'] }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </div>
@@ -42,6 +43,7 @@
     </div>
 
     <script>
+        const videoName = "{{ video_name }}";
         document.addEventListener('DOMContentLoaded', function() {
             var videoPlayer = document.getElementById('videoPlayer');
             var commentBox = document.getElementById('commentBox');

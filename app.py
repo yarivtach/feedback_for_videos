@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, render_template, request, redirect, session, url_for, send_from_directory
 import csv
+from google.cloud import storage
+from google.auth.transport.requests import Request
+import datetime
 import requests
 import json
 import os
@@ -8,7 +11,14 @@ from db import Database
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
-app = Flask(__name__, static_folder=static_folder)#), stat(message_spec=None))
+
+
+bucket_name = 'feedbackbucket14'
+google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+storage_client = storage.Client.from_service_account_json(google_key)
+bucket = storage_client.bucket(bucket_name)
+
+app = Flask(__name__, static_folder='static') # the change to 'static' is to fetch the static folder from the root of the project
 app.secret_key = 'your_secret_key'  # Needed for session management
 load_dotenv()  # Load environment variables from a .env file
 
@@ -32,7 +42,7 @@ def home():
         return redirect(url_for('home'))
 
     user_email = session.get('user_email', None)
-    videos = ['corner', 'door', 'obstacles', 'people'] if user_email else []
+    videos = list_videos() if user_email else {}
     return render_template('home.html', videos=videos, user_email=user_email)
 
 @app.route('/sign_in', methods=['POST'])
@@ -76,21 +86,11 @@ def submit_questionnaire():
 
 @app.route('/video_gallery')
 def video_gallery():
-    videos_folder = os.path.join(app.static_folder, 'Videos')
-    print(f"Videos folder: {videos_folder}")
-    if not os.path.exists(videos_folder):
-        app.logger.error(f"Videos folder not found: {videos_folder}")
-        return "Videos folder not found", 404
+    if not session.get('user_email'):
+        return redirect(url_for('home'))
+    videos = list_videos()
+    return render_template('videos.html', videos=videos, bucket_name=bucket_name)
     
-    all_files = os.listdir(videos_folder)
-    videos = [f for f in all_files if f.endswith(('.mp4', '.avi', '.mov'))]
-    # for filename in os.listdir(videos_folder):
-    #     if filename.endswith(('.mp4', '.avi', '.mov')):
-    #         #videos.append(os.path.splitext(filename)[0]) 
-    #         videos.append(filename)
-    return render_template('videos.html', videos=videos)
-
-
 
 def convert_comments_to_json(original_comment):
     # Create a dictionary to hold the feedback
@@ -111,11 +111,35 @@ def questionnaire_form():
 @app.route('/static/Videos/<video_name>')
 def video_page(video_name):
     # return render_template('video_page.html', video_name=video_name)
-    return send_from_directory(app.config['VIDEOS_FOLDER'], video_name)
+    videos = list_videos()
+    video = videos.get(video_name)
+    if not video:
+        return "Video not found", 404
+    return render_template('video_page.html', video=video, video_name=video_name)
+
+def list_videos():
+    videos = {}
+    blobs = bucket.list_blobs() # blob is a file in the bucket
+    for blob in blobs:
+        if blob.name.endswith('.mp4'):
+            video_id = os.path.splitext(blob.name)[0]
+            videos[video_id] = {
+                'title': blob.name.replace('_', ' ').replace('.mp4', ''),  # Clean up the title
+                'url': f"https://storage.googleapis.com/{bucket_name}/{blob.name}",
+                # 'thumbnail': f"https://storage.googleapis.com/{bucket_name}/{blob.name.replace('.mp4', '.jpg')}"
+            }
+            print(f"Video added: {video_id} , {videos[video_id]['url']}")
+    return videos
+
 
 @app.route('/static/videos/<video_name>')
-def serve_video(filename):
-    return send_from_directory(app.config['VIDEOS_FOLDER'], filename)
+def serve_video(video_name):
+    print(f"Serving video: {video_name}")
+    videos = list_videos()
+    video = videos.get(video_name)
+    if not video:
+        return "Video not found", 404
+    return redirect(video['url'])
 
 
         
@@ -159,6 +183,7 @@ def logout():
     session.pop('user_email', None)
     return '', 204  # Return no content for sendBeacon**
 
+
 # Function to save answers to a CSV file
 def save_answers_csv(user_email, video_name, safety, speed, convenience, time=None, comment=None):
     # Define the full path to the CSV file
@@ -185,7 +210,9 @@ def save_answers_csv(user_email, video_name, safety, speed, convenience, time=No
             'comment': comment
         })
         
+        
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True, static_folder=static_folder, static_url_path='/static')
+    app.run(host='0.0.0.0', port=port, debug=True)
