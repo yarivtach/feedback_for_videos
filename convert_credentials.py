@@ -1,9 +1,13 @@
 import json
 
 # Read the JSON file
-with open('your-credentials.json', 'r') as f:
+with open('D:/BGU UNIVERSITY/PROJECT/additional files/google_cloud_key.json', 'r') as f:
     credentials = json.load(f)
 
-# Convert to single line
-single_line = json.dumps(credentials)
-print(single_line)
+# Convert to single line and save to a file
+with open('credentials_single_line.txt', 'w') as f:
+    f.write(json.dumps(credentials))
+
+# Also print to console
+print("Your credentials in single line format:")
+print(json.dumps(credentials))
