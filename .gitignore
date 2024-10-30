@@ -1,39 +1,10 @@
-# Credentials and Environment
+# Development files
 .env
-credentials_single_line.txt
-credentials.json
-*credentials*
-*.key
-*.pem
-.\additional files\citric-earth-439216-r8-d0cb6a2b8da7.json
-.\additional files\google_cloud_key.json
-convert_credentials.py
-tests/
-credential_test.py
-
-# Python
+# credentials/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.env/
-.venv/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Operating System
-.DS_Store
-Thumbs.db
-
-# Render specific
-.render/
+# Production secrets
+.env.production
 
 
 

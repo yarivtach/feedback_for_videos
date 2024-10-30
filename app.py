@@ -16,7 +16,9 @@ from pathlib import Path
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
 CREDENTIALS_PATH = os.path.join(basedir,'credentials','google_cloud_key.json')
-
+# Get environment
+ENV = os.getenv('FLASK_ENV', 'development')
+IS_PRODUCTION = ENV == 'production'
 
 # Initialize storage
 def init_app():
@@ -72,6 +74,9 @@ def verify_credentials():
 
 def initialize_storage_client():
     try:
+        # In production, assume credentials are properly configured
+        if IS_PRODUCTION:
+            return storage.Client()
         print("\n=== DEBUG: Checking Credentials ===")
         
         # Try environment variable first
@@ -148,9 +153,10 @@ def verify_credentials_file():
     
     
     # Use it in your app initialization
-if verify_credentials():
+    #unless it is in production
+if verify_credentials() or IS_PRODUCTION:
     storage_client = storage.Client()
-    bucket_name = 'your-bucket-name'
+    bucket_name = 'feedbackbucket14'
     bucket = storage_client.bucket(bucket_name)
     print("✅ Storage client initialized successfully")
 else:
