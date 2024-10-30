@@ -3,6 +3,7 @@ import csv
 import convert_credentials
 from google.cloud import storage
 from google.auth.transport.requests import Request
+from google.oauth2 import service_account
 import datetime
 import requests
 import json
@@ -11,42 +12,65 @@ from dotenv import load_dotenv
 from db import Database
 import convert_credentials
 import tests.verify_credentials
-from pathlib import Path
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
 CREDENTIALS_PATH = os.path.join(basedir,'credentials','google_cloud_key.json')
-# Get environment
-ENV = os.getenv('FLASK_ENV', 'development')
-IS_PRODUCTION = ENV == 'production'
+
 
 # Initialize storage
 def init_app():
     global storage_client, bucket
     
     print("\n=== Initializing Application ===")
-    
-    # Verify credentials exist
-    if not os.path.exists(CREDENTIALS_PATH):
-        print(f"❌ Credentials not found at: {CREDENTIALS_PATH}")
-        return False
-        
-    # Set environment variable
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = str(CREDENTIALS_PATH)
-    
     try:
-        # Initialize storage client
-        storage_client = storage.Client()
+        # Load credentials explicitly
+        credentials = service_account.Credentials.from_service_account_file(
+            CREDENTIALS_PATH,
+            scopes=['https://www.googleapis.com/auth/cloud-platform']
+        )
+        storage_client = storage.Client(credentials=credentials, project=credentials.project_id) # Initialize storage client with credentials
         bucket = storage_client.bucket('feedbackbucket14')
         
         # Test connection
         bucket.exists()
-        print("✅ Successfully initialized storage")
+        print("✅ Storage client initialized successfully")
         return True
-        
     except Exception as e:
         print(f"❌ Error initializing app: {e}")
+        try:
+            with open(CREDENTIALS_PATH, 'r') as f:
+                creds = json.load(f)
+                print("\nCredentials Info:")
+                print(f"Project ID: {creds.get('project_id')}")
+                print(f"Client Email: {creds.get('client_email')}")
+        except Exception as read_error:
+            print(f"Could not read credentials file: {read_error}")
         return False
+
+
+    
+    # # Verify credentials exist
+    # if not os.path.exists(CREDENTIALS_PATH):
+    #     print(f"❌ Credentials not found at: {CREDENTIALS_PATH}")
+    #     return False
+        
+    # # Set environment variable
+    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = str(CREDENTIALS_PATH)
+    
+    # try:
+    #     # Initialize storage client
+    #     storage_client = storage.Client()
+    #     bucket = storage_client.bucket('feedbackbucket14')
+        
+    #     # Test connection
+    #     bucket.exists()
+    #     print("✅ Successfully initialized storage")
+    #     return True
+        
+    # except Exception as e:
+    #     print(f"❌ Error initializing app: {e}")
+    #     return False
 
 # Initialize at startup
 if not init_app():
@@ -74,9 +98,6 @@ def verify_credentials():
 
 def initialize_storage_client():
     try:
-        # In production, assume credentials are properly configured
-        if IS_PRODUCTION:
-            return storage.Client()
         print("\n=== DEBUG: Checking Credentials ===")
         
         # Try environment variable first
@@ -153,10 +174,9 @@ def verify_credentials_file():
     
     
     # Use it in your app initialization
-    #unless it is in production
-if verify_credentials() or IS_PRODUCTION:
+if verify_credentials():
     storage_client = storage.Client()
-    bucket_name = 'feedbackbucket14'
+    bucket_name = 'your-bucket-name'
     bucket = storage_client.bucket(bucket_name)
     print("✅ Storage client initialized successfully")
 else:
