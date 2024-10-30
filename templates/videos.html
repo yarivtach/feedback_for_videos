@@ -70,17 +70,15 @@
         {% if videos %}
             <div class="video-gallery">
                 {% for video_id, video in videos.items() %}
-                    <div class="video-item">
-                        <a href="{{ url_for('video_page', video_name=video_id) }}">
-                            <img class="video-thumbnail" 
-                                 src="https://storage.googleapis.com/{{ bucket_name }}/{{ video.title }}" 
-                                 alt="{{ video.title }}">
-                            <h3 class="video-title">{{ video.title }}</h3>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+                <div class="video-item">
+                    <a href="{{ url_for('video_page', video_name=video_id) }}">
+                        <img class="video-thumbnail" 
+                             src="https://storage.googleapis.com/{{ bucket_name }}/thumbnails/{{ video.title }}" 
+                             alt="{{ video.title }}">
+                        <h3 class="video-title">{{ video.title }}</h3>
+                    </a>
+                </div>
+            {% endfor %}
     </div>
 </body>
 </html>
