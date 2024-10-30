@@ -10,28 +10,153 @@ import os
 from dotenv import load_dotenv
 from db import Database
 import convert_credentials
+import tests.verify_credentials
+from pathlib import Path
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
+CREDENTIALS_PATH = os.path.join(basedir,'credentials','google_cloud_key.json')
+
+
+# Initialize storage
+def init_app():
+    global storage_client, bucket
+    
+    print("\n=== Initializing Application ===")
+    
+    # Verify credentials exist
+    if not os.path.exists(CREDENTIALS_PATH):
+        print(f"❌ Credentials not found at: {CREDENTIALS_PATH}")
+        return False
+        
+    # Set environment variable
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = str(CREDENTIALS_PATH)
+    
+    try:
+        # Initialize storage client
+        storage_client = storage.Client()
+        bucket = storage_client.bucket('feedbackbucket14')
+        
+        # Test connection
+        bucket.exists()
+        print("✅ Successfully initialized storage")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error initializing app: {e}")
+        return False
+
+# Initialize at startup
+if not init_app():
+    print("❌ Failed to initialize application")
+    exit(1)
+# Verify the path exists
+def verify_credentials():
+    try:
+        print("\n=== Checking Credentials Path ===")
+        print(f"Base directory: {basedir}")
+        print(f"Looking for credentials at: {CREDENTIALS_PATH}")
+        
+        if not os.path.exists(CREDENTIALS_PATH):
+            print("❌ Credentials file not found!")
+            return False
+            
+        # Set the environment variable
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = CREDENTIALS_PATH
+        print(f"✅ Found credentials file")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error verifying credentials: {e}")
+        return False
 
 def initialize_storage_client():
     try:
-        credentials = convert_credentials.get_credentials()
-        if credentials:
-            storage_client = storage.Client.from_service_account_info(credentials)
-            print("Successfully initialized storage client")
-            return storage_client
-        else:
-            print("No credentials found")
-            # For local development
-            google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-            storage_client = storage.Client.from_service_account_json(google_key)
+        print("\n=== DEBUG: Checking Credentials ===")
         
-        return storage_client
+        # Try environment variable first
+        google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+        if google_key:
+            print(f"Found credentials path: {google_key}")
+            # Verify file exists
+            if not os.path.exists(google_key):
+                print("ERROR: Credentials file not found!")
+                return None
+            
+            try:
+                storage_client = storage.Client.from_service_account_json(google_key)
+                print("Successfully initialized from JSON file")
+                return storage_client
+            except Exception as e:
+                print(f"Error loading credentials from file: {e}")
+        
+        # Try credentials from convert_credentials
+        try:
+            credentials = convert_credentials.get_credentials()
+            if credentials:
+                print("Found credentials from convert_credentials")
+                storage_client = storage.Client.from_service_account_info(credentials)
+                print("Successfully initialized from credentials info")
+                return storage_client
+        except Exception as e:
+            print(f"Error loading credentials from convert_credentials: {e}")
+        
+        print("No valid credentials found!")
+        return None
+        
     except Exception as e:
-        print(f"Error initializing storage client: {e}")
+        print(f"Error in initialize_storage_client: {e}")
         return None
     
+def verify_credentials_file():
+    try:
+        print("\n=== Verifying Credentials File ===")
+        
+        # Get the absolute path to credentials
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        creds_path = os.path.join(base_dir, 'credentials', 'google_cloud_key.json')
+        
+        print(f"Looking for credentials at: {creds_path}")
+        
+        # Check if file exists
+        if not os.path.exists(creds_path):
+            print("❌ Credentials file not found!")
+            return False
+            
+        # Try to read and parse the JSON
+        with open(creds_path, 'r') as f:
+            creds_data = json.load(f)
+            
+        # Verify required fields
+        required_fields = ['type', 'project_id', 'private_key_id', 'private_key', 'client_email']
+        for field in required_fields:
+            if field not in creds_data:
+                print(f"❌ Missing required field: {field}")
+                return False
+                
+        # Set environment variable
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = creds_path
+        print("✅ Credentials file verified successfully")
+        return True
+        
+    except json.JSONDecodeError:
+        print("❌ Invalid JSON format in credentials file")
+        return False
+    except Exception as e:
+        print(f"❌ Error verifying credentials: {e}")
+        return False
+    
+    
+    # Use it in your app initialization
+if verify_credentials():
+    storage_client = storage.Client()
+    bucket_name = 'your-bucket-name'
+    bucket = storage_client.bucket(bucket_name)
+    print("✅ Storage client initialized successfully")
+else:
+    print("❌ Failed to initialize storage client")
+    storage_client = None
+    bucket = None
 
 app = Flask(__name__, static_folder='static') # the change to 'static' is to fetch the static folder from the root of the project
 app.secret_key = 'your_secret_key'  # Needed for session management
@@ -153,22 +278,71 @@ def video_page(video_name):
 def list_videos():
     videos = {}
     try:
+        print("\n=== DEBUG: list_videos() ===")
+        print(f"Storage Client Status: {'Initialized' if storage_client else 'Not Initialized'}")
+        print(f"Bucket Name: {bucket_name}")
+        
         if not storage_client or not bucket:
-            print("storage client or bucket not initialized")
+            print("ERROR: Storage client or bucket not initialized")
             return videos
         
-        blobs = bucket.list_blobs() # blob is a file in the bucket
+        print("Attempting to list blobs...")
+        blobs = bucket.list_blobs()
+        blob_count = 0
+        video_count = 0
+        
+        # List all blobs for debugging
         for blob in blobs:
+            blob_count += 1
+            print(f"Found blob: {blob.name}")
+            
             if blob.name.endswith('.mp4'):
+                video_count += 1
                 video_id = os.path.splitext(blob.name)[0]
+                video_url = f"https://storage.googleapis.com/{bucket_name}/{blob.name}"
+                
+                # Create video entry
                 videos[video_id] = {
-                    'title': blob.name.replace('_', ' ').replace('.mp4', ''),  # Clean up the title
-                    'url': f"https://storage.googleapis.com/{bucket_name}/{blob.name}",
-                    # 'thumbnail': f"https://storage.googleapis.com/{bucket_name}/{blob.name.replace('.mp4', '.jpg')}"
+                    'title': blob.name.replace('_', ' ').replace('.mp4', ''),
+                    'url': video_url,
+                    'raw_name': blob.name,
+                    'size': blob.size,
+                    'updated': blob.updated.isoformat(),
+                    'public_url': blob.public_url if hasattr(blob, 'public_url') else None,
                 }
-                print(f"Video added: {video_id} , {videos[video_id]['url']}")
+                      # Try to generate thumbnail URL if exists
+                thumbnail_name = f"{video_id}.jpg"
+                if any(b.name == thumbnail_name for b in bucket.list_blobs(prefix=thumbnail_name)):
+                    videos[video_id]['thumbnail'] = f"https://storage.googleapis.com/{bucket_name}/{thumbnail_name}"
+                
+                print(f"Added video {video_count}:")
+                print(f"  ID: {video_id}")
+                print(f"  URL: {video_url}")
+                print(f"  Size: {blob.size} bytes")
+                print(f"  Last Updated: {blob.updated}")
+        
+        print(f"\nSummary:")
+        print(f"Total blobs found: {blob_count}")
+        print(f"Total videos added: {video_count}")
+        
+        if video_count == 0:
+            print("\nTroubleshooting suggestions:")
+            print("1. Verify bucket contains .mp4 files")
+            print("2. Check bucket permissions")
+            print("3. Verify bucket name is correct")
+            print(f"4. Current bucket name: {bucket_name}")
+        
+        print("=== END DEBUG ===\n")
+        
     except Exception as e:
-        print(f"Error listing videos: {e}")
+        print("\n=== ERROR in list_videos() ===")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Error message: {str(e)}")
+        import traceback
+        print("Traceback:")
+        print(traceback.format_exc())
+        print("=== END ERROR ===\n")
+    
     return videos
 
 

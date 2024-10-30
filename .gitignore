@@ -8,6 +8,8 @@ credentials.json
 .\additional files\citric-earth-439216-r8-d0cb6a2b8da7.json
 .\additional files\google_cloud_key.json
 convert_credentials.py
+tests/
+credential_test.py
 
 # Python
 __pycache__/
