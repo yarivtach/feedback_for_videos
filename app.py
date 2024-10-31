@@ -12,11 +12,12 @@ from dotenv import load_dotenv
 from db import Database
 import convert_credentials
 import tests.verify_credentials
+from configManager import ConfigManager
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
 CREDENTIALS_PATH = os.path.join(basedir,'credentials','google_cloud_key.json')
-
+config_manager = ConfigManager()
 
 # Initialize storage
 def init_app():
@@ -118,7 +119,7 @@ def initialize_storage_client():
         
         # Try credentials from convert_credentials
         try:
-            credentials = convert_credentials.get_credentials()
+            credentials = get_credentials() #convert_credentials.get_credentials()
             if credentials:
                 print("Found credentials from convert_credentials")
                 storage_client = storage.Client.from_service_account_info(credentials)
@@ -132,6 +133,24 @@ def initialize_storage_client():
         
     except Exception as e:
         print(f"Error in initialize_storage_client: {e}")
+        return None
+    
+def get_credentials():
+    try:
+        creds_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
+        if not creds_json:
+            print("No credentials found in environment")
+            return None
+            
+        # Clean up the private key formatting
+        creds_dict = json.loads(creds_json)
+        if 'private_key' in creds_dict:
+            # Replace literal \n with actual newlines
+            creds_dict['private_key'] = creds_dict['private_key'].replace('\\n', '\n')
+            
+        return service_account.Credentials.from_service_account_info(creds_dict)
+    except Exception as e:
+        print(f"Error loading credentials: {e}")
         return None
     
 def verify_credentials_file():
