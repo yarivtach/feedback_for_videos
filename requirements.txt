@@ -6,6 +6,7 @@ click==8.1.7
 colorama==0.4.6
 dnspython==1.16.0
 Flask==3.0.3
+git-filter-repo==2.45.0
 google-api-core==2.21.0
 google-auth==2.35.0
 google-cloud-core==2.4.1
