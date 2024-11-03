@@ -5,3 +5,4 @@ credentials/
 convert_credentials.py
 credentials_single_line.txt
 *.txt
+credentials/google_cloud_key.json
