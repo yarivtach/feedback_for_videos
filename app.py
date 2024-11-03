@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, render_template, request, redirect, session, url_for, send_from_directory
 import csv
-import convert_credentials
 from google.cloud import storage
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
