@@ -19,202 +19,48 @@ static_folder = os.path.join(basedir, 'static')
 CREDENTIALS_PATH = os.path.join(basedir,'credentials','google_cloud_key.json')
 config_manager = ConfigManager()
 
-# Initialize storage
-def init_app():
-    global storage_client, bucket
-    
-    print("\n=== Initializing Application ===")
-    try:
-        # Load credentials explicitly
-        credentials = service_account.Credentials.from_service_account_file(
-            CREDENTIALS_PATH,
-            scopes=['https://www.googleapis.com/auth/cloud-platform']
-        )
-        storage_client = storage.Client(credentials=credentials, project=credentials.project_id) # Initialize storage client with credentials
-        bucket = storage_client.bucket('feedbackbucket14')
-        
-        # Test connection
-        bucket.exists()
-        print("✅ Storage client initialized successfully")
-        return True
-    except Exception as e:
-        print(f"❌ Error initializing app: {e}")
-        try:
-            with open(CREDENTIALS_PATH, 'r') as f:
-                creds = json.load(f)
-                print("\nCredentials Info:")
-                print(f"Project ID: {creds.get('project_id')}")
-                print(f"Client Email: {creds.get('client_email')}")
-        except Exception as read_error:
-            print(f"Could not read credentials file: {read_error}")
-        return False
-
-
-    
-    # # Verify credentials exist
-    # if not os.path.exists(CREDENTIALS_PATH):
-    #     print(f"❌ Credentials not found at: {CREDENTIALS_PATH}")
-    #     return False
-        
-    # # Set environment variable
-    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = str(CREDENTIALS_PATH)
-    
-    # try:
-    #     # Initialize storage client
-    #     storage_client = storage.Client()
-    #     bucket = storage_client.bucket('feedbackbucket14')
-        
-    #     # Test connection
-    #     bucket.exists()
-    #     print("✅ Successfully initialized storage")
-    #     return True
-        
-    # except Exception as e:
-    #     print(f"❌ Error initializing app: {e}")
-    #     return False
-
-# Initialize at startup
-if not init_app():
-    print("❌ Failed to initialize application")
-    exit(1)
-# Verify the path exists
-def verify_credentials():
-    try:
-        print("\n=== Checking Credentials Path ===")
-        print(f"Base directory: {basedir}")
-        print(f"Looking for credentials at: {CREDENTIALS_PATH}")
-        
-        if not os.path.exists(CREDENTIALS_PATH):
-            print("❌ Credentials file not found!")
-            return False
-            
-        # Set the environment variable
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = CREDENTIALS_PATH
-        print(f"✅ Found credentials file")
-        return True
-        
-    except Exception as e:
-        print(f"❌ Error verifying credentials: {e}")
-        return False
-
-def initialize_storage_client():
-    try:
-        print("\n=== DEBUG: Checking Credentials ===")
-        
-        # Try environment variable first
-        google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-        if google_key:
-            print(f"Found credentials path: {google_key}")
-            # Verify file exists
-            if not os.path.exists(google_key):
-                print("ERROR: Credentials file not found!")
-                return None
-            
-            try:
-                storage_client = storage.Client.from_service_account_json(google_key)
-                print("Successfully initialized from JSON file")
-                return storage_client
-            except Exception as e:
-                print(f"Error loading credentials from file: {e}")
-        
-        # Try credentials from convert_credentials
-        try:
-            credentials = get_credentials() #convert_credentials.get_credentials()
-            if credentials:
-                print("Found credentials from convert_credentials")
-                storage_client = storage.Client.from_service_account_info(credentials)
-                print("Successfully initialized from credentials info")
-                return storage_client
-        except Exception as e:
-            print(f"Error loading credentials from convert_credentials: {e}")
-        
-        print("No valid credentials found!")
-        return None
-        
-    except Exception as e:
-        print(f"Error in initialize_storage_client: {e}")
-        return None
-    
-def get_credentials():
-    try:
-        creds_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
-        if not creds_json:
-            print("No credentials found in environment")
-            return None
-            
-        # Clean up the private key formatting
-        creds_dict = json.loads(creds_json)
-        if 'private_key' in creds_dict:
-            # Replace literal \n with actual newlines
-            creds_dict['private_key'] = creds_dict['private_key'].replace('\\n', '\n')
-            
-        return service_account.Credentials.from_service_account_info(creds_dict)
-    except Exception as e:
-        print(f"Error loading credentials: {e}")
-        return None
-    
-def verify_credentials_file():
-    try:
-        print("\n=== Verifying Credentials File ===")
-        
-        # Get the absolute path to credentials
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        creds_path = os.path.join(base_dir, 'credentials', 'google_cloud_key.json')
-        
-        print(f"Looking for credentials at: {creds_path}")
-        
-        # Check if file exists
-        if not os.path.exists(creds_path):
-            print("❌ Credentials file not found!")
-            return False
-            
-        # Try to read and parse the JSON
-        with open(creds_path, 'r') as f:
-            creds_data = json.load(f)
-            
-        # Verify required fields
-        required_fields = ['type', 'project_id', 'private_key_id', 'private_key', 'client_email']
-        for field in required_fields:
-            if field not in creds_data:
-                print(f"❌ Missing required field: {field}")
-                return False
-                
-        # Set environment variable
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = creds_path
-        print("✅ Credentials file verified successfully")
-        return True
-        
-    except json.JSONDecodeError:
-        print("❌ Invalid JSON format in credentials file")
-        return False
-    except Exception as e:
-        print(f"❌ Error verifying credentials: {e}")
-        return False
-    
-    
-    # Use it in your app initialization
-if verify_credentials():
-    storage_client = storage.Client()
-    bucket_name = 'your-bucket-name'
-    bucket = storage_client.bucket(bucket_name)
-    print("✅ Storage client initialized successfully")
-else:
-    print("❌ Failed to initialize storage client")
-    storage_client = None
-    bucket = None
-
 app = Flask(__name__, static_folder='static') # the change to 'static' is to fetch the static folder from the root of the project
 app.secret_key = 'your_secret_key'  # Needed for session management
 load_dotenv()  # Load environment variables from a .env file
 
-bucket_name = 'feedbackbucket14'
-google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-storage_client = initialize_storage_client()
-if storage_client:
-    bucket = storage_client.bucket(bucket_name=bucket_name)
-else:
-    print("Storage client not initialized")
-    bucket = None
+print("\n=== Initializing Application ===")
+try:
+    # First verify environment variables
+    bucket_name = config_manager.get_bucket_name()
+    print(f"Using bucket: {bucket_name}")
+    
+    if config_manager.initialize_with_base64_credentials():
+        storage_client = config_manager.get_storage_client()
+        bucket = config_manager.get_bucket()
+        
+        if storage_client and bucket:
+            app.config['storage_client'] = storage_client
+            app.config['bucket'] = bucket
+            print("✅ Application initialized successfully")
+        else:
+            print("❌ Failed to get storage client or bucket")
+            app.config['storage_client'] = None
+            app.config['bucket'] = None
+    else:
+        print("❌ Failed to initialize with credentials")
+        app.config['storage_client'] = None
+        app.config['bucket'] = None
+        
+except Exception as e:
+    print(f"❌ Error during initialization: {str(e)}")
+    app.config['storage_client'] = None
+    app.config['bucket'] = None
+
+
+# #bucket_name = 'feedbackbucket14'
+# google_key = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+# storage_client = config_manager.initialize_storage_client()
+# if storage_client:
+#     bucket = config_manager.get_bucket()
+    
+# else:
+#     print("Storage client not initialized")
+#     bucket = None
 
 videos_folder = os.path.join(basedir, 'videos')
 app.config['VIDEOS_FOLDER'] = videos_folder

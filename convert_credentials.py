@@ -1,8 +1,115 @@
 import os
 import json
 from dotenv import load_dotenv
+import base64
+import subprocess
+
+
+def save_credentials_formats():
+    print("\n=== Converting Credentials to Different Formats ===")
+    try:
+        load_dotenv()
+        
+        # Setup paths
+        base_dir = os.path.dirname(__file__)
+        credentials_dir = os.path.join(base_dir, 'credentials')
+        json_file_path = os.path.join(credentials_dir, 'google_cloud_key.json')
+        
+        # Ensure credentials directory exists
+        os.makedirs(credentials_dir, exist_ok=True)
+        
+        # Read original JSON file
+        with open(json_file_path, 'r') as f:
+            creds = json.load(f)
+            print("✅ Original credentials loaded")
+        
+        # 1. Save single-line JSON version
+        single_line_path = os.path.join(credentials_dir, 'credentials_single_line.txt')
+        creds_single_line = json.dumps(creds, separators=(',', ':'))
+        with open(single_line_path, 'w') as f:
+            f.write(creds_single_line)
+        print(f"✅ Single-line credentials saved to: {single_line_path}")
+        
+        # 2. Save Base64 encoded version
+        with open(json_file_path, 'rb') as f:
+            json_data = f.read()
+        encoded_credentials = base64.b64encode(json_data).decode('utf-8')
+        encoded_path = os.path.join(credentials_dir, 'credentials_base64.txt')
+        with open(encoded_path, 'w') as f:
+            f.write(encoded_credentials)
+        print(f"✅ Base64 encoded credentials saved to: {encoded_path}")
+        
+        # 3. Set environment variable
+        os.environ['GOOGLE_CREDENTIALS_BASE64'] = encoded_credentials
+        
+        # 4. Set persistent environment variable (Windows only)
+        if os.name == 'nt':  # Windows
+            try:
+                subprocess.run(['setx', 'GOOGLE_CREDENTIALS_BASE64', encoded_credentials])
+                print("✅ Environment variable set persistently")
+            except Exception as e:
+                print(f"⚠️ Could not set persistent environment variable: {str(e)}")
+        
+        # 5. Verify and print file sizes
+        print("\nFile sizes:")
+        print(f"Original JSON: {os.path.getsize(json_file_path)} bytes")
+        print(f"Single-line: {os.path.getsize(single_line_path)} bytes")
+        print(f"Base64: {os.path.getsize(encoded_path)} bytes")
+        
+        return True
+    
+    except Exception as e:
+        print(f"❌ Error converting credentials: {str(e)}")
+        return False
+def verify_credentials_format(creds_dict):
+    """Verify the format of credentials"""
+    required_fields = [
+        'type', 'project_id', 'private_key_id', 'private_key',
+        'client_email', 'client_id'
+    ]
+    
+    for field in required_fields:
+        if field not in creds_dict:
+            print(f"❌ Missing required field: {field}")
+            return False
+    
+    # Verify private key format
+    if not creds_dict['private_key'].startswith('-----BEGIN PRIVATE KEY-----\n'):
+        print("❌ Private key format is incorrect")
+        return False
+        
+    return True
+
 
 load_dotenv()
+json_file_path = os.path.join(os.path.dirname(__file__), 'credentials', 'google_cloud_key.json')
+#======== Active for any new key=========
+with open(json_file_path, 'r') as f:
+    creds = json.load(f)
+
+with open(json_file_path, 'rb') as json_file:
+    json_data = json_file.read()  # This reads the file in binary mode, returning bytes
+
+    
+#convert to one line
+creds_single_line = json.dumps(creds)
+with open(os.path.join(os.path.dirname(__file__), 'credentials', 'credentials_single_line.txt'), 'w') as f:
+    f.write(creds_single_line)
+          
+# Encode the JSON data to Base64
+encoded_credentials = base64.b64encode(json_data).decode('utf-8')
+print(encoded_credentials)
+
+# Set the environment variable
+os.environ['GOOGLE_CREDENTIALS_BASE64'] = encoded_credentials
+
+# Verify that the environment variable is set (optional)
+print(os.getenv('GOOGLE_CREDENTIALS_BASE64'))
+
+# Set the environment variable persistently
+subprocess.run(['setx', 'GOOGLE_CREDENTIALS_BASE64', encoded_credentials])
+
+
 
 def get_credentials():
     try:
@@ -32,13 +139,28 @@ def get_credentials():
         print(f"Error in get_credentials: {str(e)}")
         return None
 
-# Read the JSON file
-credentials = get_credentials()
 
-# Convert to single line and save to a file
-with open('credentials_single_line.txt', 'w') as f:
-    f.write(json.dumps(credentials))
 
-# Also print to console
-print("Your credentials in single line format:")
-print(json.dumps(credentials))
+
+if __name__ == "__main__":
+    print("\n=== Starting Credentials Conversion ===")
+    
+    # Read the JSON file
+    credentials = get_credentials()
+
+    # Convert to single line and save to a file
+    with open('credentials_single_line.txt', 'w') as f:
+        f.write(json.dumps(credentials))
+
+    # Also print to console
+    print("====for the txt file=====")
+    print("Your credentials in single line format:")
+    print(json.dumps(credentials))
+    
+    if save_credentials_formats():
+        print("\n✅ Conversion completed successfully")
+        print("\nGenerated files in 'credentials' directory:")
+        print("1. credentials_single_line.txt - Single line JSON format")
+        print("2. credentials_base64.txt - Base64 encoded format")
+    else:
+        print("\n❌ Conversion failed")

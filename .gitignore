@@ -1,11 +1,6 @@
-# Development files
 .env
-# credentials/
-__pycache__/
-
-# Production secrets
-.env.production
-
-
-
-
+credentials/
+*.json
+convert_credentials.py
+credentials_single_line.txt
+*.txt
