@@ -10,7 +10,6 @@ import json
 import os
 from dotenv import load_dotenv
 from db import Database
-import convert_credentials
 import tests.verify_credentials
 from configManager import ConfigManager
 

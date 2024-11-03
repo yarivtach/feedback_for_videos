@@ -1,4 +1,5 @@
 .env
+convert_credentials.py
 credentials/
 *.json
 convert_credentials.py

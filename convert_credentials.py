@@ -3,6 +3,7 @@ import json
 from dotenv import load_dotenv
 import base64
 import subprocess
+import platform
 
 
 def save_credentials_formats():
