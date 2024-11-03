@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Default Title{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Your main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    <!-- Additional page-specific CSS -->
+    {% block additional_css %}{% endblock %}
+</head>
+<body>
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="container nav-container">
+                <div class="nav-left">
+                    <a href="{{ url_for('home') }}" class="nav-logo">Video Gallery</a>
+                </div>
+                
+                <div class="nav-right">
+                    {% if session.get('user_email') %}
+                        <span class="user-email">{{ session.get('user_email') }}</span>
+                        <a href="{{ url_for('video_gallery') }}" class="nav-link">Videos</a>
+                        <a href="{{ url_for('logout') }}" class="btn-outline">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    {% block content %}
+    {% endblock %}
+
+    <!-- Common scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

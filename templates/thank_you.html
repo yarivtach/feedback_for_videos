@@ -1,15 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>Thank you for your response!</h1>
-        <p><a href="/">Return to Home</a></p>
+{% extends "base.html" %}
+
+{% block title %}Thank You{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="thank-you-message">
+        <h1>Thank You for Your Feedback!</h1>
+        <p>Your response has been recorded successfully.</p>
+        
+        {% if session.user_email %}
+            <a href="{{ url_for('video_gallery') }}" class="btn btn-primary">Return to Video Gallery</a>
+        {% else %}
+            <a href="{{ url_for('home') }}" class="btn btn-primary">Return to Home</a>
+        {% endif %}
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

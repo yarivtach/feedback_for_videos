@@ -1,157 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Gallery</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2% 0;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 2%;
-        }
-        .video-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2%;
-        }
-        .video-item {
-            flex-basis: calc(25% - 2%);
-            margin-bottom: 2%;
-            text-align: center;
-        }
-        .video-thumbnail {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .video-thumbnail:hover {
-            transform: scale(1.05);
-        }
-        .video-title {
-            margin-top: 2%;
-            font-size: 1em;
-            word-wrap: break-word;
-        }
-        @media (max-width: 1024px) {
-            .video-item {
-                flex-basis: calc(33.333% - 2%);
-            }
-        }
-        @media (max-width: 768px) {
-            .video-item {
-                flex-basis: calc(50% - 2%);
-            }
-        }
-        @media (max-width: 480px) {
-            .video-item {
-                flex-basis: 100%;
-            }
-        }
+{% extends "base.html" %}
 
-        /* Add debug info styles */
-        .debug-info {
-            background: #f0f0f0;
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #ddd;
-            display: none; /* Remove this line to show debug info */
-        }
-        
-        /* Add video controls styles */
-        .video-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-        }
-        
-        .watch-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Video Gallery</h1>
-                <!-- Debug Information -->
-                <div class="debug-info">
-                    <h3>Debug Info:</h3>
-                    <p>Number of videos: {{ videos|length if videos else 0 }}</p>
-                    <p>Bucket name: {{ bucket_name }}</p>
-                    <pre>{{ videos|tojson(indent=2) if videos else 'No videos' }}</pre>
-                </div>
+{% block title %}Video Gallery{% endblock %}
 
-                {% if videos %}
-                <div class="video-gallery">
-                    {% for video_id, video in videos.items() %}
-                        <div class="video-item">
-                            <div class="video-container">
-                                {% if video.url %}
-                                    <video width="100%" controls>
-                                        <source src="{{ video.url }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                {% else %}
-                                    <img class="video-thumbnail" 
-                                         src="https://storage.googleapis.com/{{ bucket_name }}/thumbnails/{{ video.title }}" 
-                                         alt="{{ video.title }}"
-                                         onerror="this.src='path/to/fallback-image.jpg'">
-                                {% endif %}
-                            </div>
-                            <h3 class="video-title">{{ video.title }}</h3>
-                            <a href="{{ url_for('video_page', video_name=video_id) }}" 
-                               class="watch-button">Watch Video</a>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p style="text-align: center;">No videos available.</p>
-            {% endif %}
-            <script>
-                // Debug logging for video loading
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Log video data
-                    console.log('Videos data:', {{ videos|tojson if videos else '{}' }});
-                    
-                    // Monitor video loading errors
-                    const videos = document.getElementsByTagName('video');
-                    for(let video of videos) {
-                        video.addEventListener('error', function(e) {
-                            console.error('Error loading video:', e);
-                            console.error('Video source:', this.getElementsByTagName('source')[0].src);
-                        });
-                    }
-        
-                    // Monitor thumbnail loading errors
-                    const thumbnails = document.getElementsByClassName('video-thumbnail');
-                    for(let thumbnail of thumbnails) {
-                        thumbnail.addEventListener('error', function(e) {
-                            console.error('Error loading thumbnail:', e);
-                            console.error('Thumbnail source:', this.src);
-                        });
-                    }
-                });
-            </script>
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Video Gallery</h1>
+    
+    <!-- Debug Information -->
+    <div class="debug-info">
+        <h3>Debug Info:</h3>
+        <p>Number of videos: {{ videos|length if videos else 0 }}</p>
+        <p>Bucket name: {{ bucket_name }}</p>
+        <pre>{{ videos|tojson(indent=2) if videos else 'No videos' }}</pre>
     </div>
-</body>
-</html>
+
+    {% if videos %}
+        <div class="video-gallery">
+            {% for video_id, video in videos.items() %}
+                <div class="video-item">
+                    <div class="video-container">
+                        {% if video.url %}
+                            <video width="100%" controls>
+                                <source src="{{ video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% else %}
+                            <img class="video-thumbnail" 
+                                 src="https://storage.googleapis.com/{{ bucket_name }}/thumbnails/{{ video.title }}" 
+                                 alt="{{ video.title }}"
+                                 onerror="this.src='/static/images/fallback-thumbnail.jpg'">
+                        {% endif %}
+                    </div>
+                    <div class="video-content">
+                        <h3 class="video-title">{{ video.title }}</h3>
+                        <a href="{{ url_for('video_page', video_name=video_id) }}" 
+                           class="watch-button">Watch Video</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-videos">
+            <p>No videos available.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Log video data
+        console.log('Videos data:', {{ videos|tojson if videos else '{}' }});
+        
+        // Monitor video loading errors
+        const videos = document.getElementsByTagName('video');
+        for(let video of videos) {
+            video.addEventListener('error', function(e) {
+                console.error('Error loading video:', e);
+                console.error('Video source:', this.getElementsByTagName('source')[0].src);
+            });
+        }
+
+        // Monitor thumbnail loading errors
+        const thumbnails = document.getElementsByClassName('video-thumbnail');
+        for(let thumbnail of thumbnails) {
+            thumbnail.addEventListener('error', function(e) {
+                console.error('Error loading thumbnail:', e);
+                console.error('Thumbnail source:', this.src);
+            });
+        }
+    });
+</script>
+{% endblock %}

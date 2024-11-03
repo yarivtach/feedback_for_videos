@@ -86,8 +86,8 @@ def home():
 @app.route('/sign_in', methods=['POST'])
 def sign_in():
     user_email = request.form.get('user_email')
-    session['user_email'] = user_email
     if validate_email(user_email):
+        session['user_email'] = user_email
         return redirect(url_for('video_gallery'))
     else:
         return "Invalid Email", 401  # Or some form of error handling
@@ -124,7 +124,8 @@ def submit_questionnaire():
 
 @app.route('/video_gallery')
 def video_gallery():
-    if not session.get('user_email'):
+    user_email = session.get('user_email')
+    if not user_email:
         return redirect(url_for('home'))
     if not storage_client or not bucket:
         print("Storage client not available")
@@ -278,12 +279,13 @@ def comment_parse(comments):
     
 @app.route('/thank_you')
 def thank_you():
-    session.pop('user_email', None)
+    # session.pop('user_email', None) # remove the user_email from the session
     return render_template('thank_you.html')
 
 @app.route('/logout')
 def logout():
     session.pop('user_email', None)
+    session.clear()
     return '', 204  # Return no content for sendBeacon**
 
 
