@@ -19,17 +19,27 @@
         <!-- Navigation Bar -->
         <nav class="navbar">
             <div class="container nav-container">
-                <div class="nav-left">
-                    <a href="{{ url_for('home') }}" class="nav-logo">Video Gallery</a>
+                {% if session.get('user_email') %}
+                    <div class="nav-left">
+                        <a href="{{ url_for('video_gallery') }}" class="btn-video-gallery">Video Gallery</a>
+                    </div>
+                {% endif %}
+                
+                <!-- Added center section -->
+                <div class="nav-center">
+                    {% if session.get('user_email') %}
+                        <div class="welcome-container">
+                            <span class="welcome-text">Welcome </span>
+                            <span class="welcome-name">{{ session.get('user_email').split('@')[0] }}</span>
+                        </div>
+                    {% endif %}
                 </div>
                 
                 <div class="nav-right">
                     {% if session.get('user_email') %}
-                        <span class="user-email">{{ session.get('user_email') }}</span>
-                        <a href="{{ url_for('video_gallery') }}" class="nav-link">Videos</a>
-                        <a href="{{ url_for('logout') }}" class="btn-outline">Logout</a>
+                        <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
                     {% else %}
-                        <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                        <a href="{{ url_for('home') }}" class="btn-sign-in">Sign in</a>
                     {% endif %}
                 </div>
             </div>

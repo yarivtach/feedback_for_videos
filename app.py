@@ -286,8 +286,7 @@ def thank_you():
 def logout():
     session.pop('user_email', None)
     session.clear()
-    return '', 204  # Return no content for sendBeacon**
-
+    return redirect(url_for('home'))
 
 
 # Function to save answers to a CSV file
