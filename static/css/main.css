@@ -359,3 +359,43 @@ h1, h2, h3 {
     font-size: 1.1rem;
     text-transform: capitalize;
 }
+
+.video-item {
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
+}
+
+.video-item.watched {
+    border-color: #4CAF50;  /* Green border for watched videos */
+    background-color: rgba(76, 175, 80, 0.1);  /* Light green background */
+    position: relative;
+}
+
+.watched-badge {
+    background-color: #4CAF50;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+
+/* Optional: Add a checkmark icon to the corner of watched videos */
+.video-item.watched::after {
+    content: "✓";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}

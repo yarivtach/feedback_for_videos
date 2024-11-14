@@ -48,6 +48,41 @@
     {% endblock %}
 
     <!-- Common scripts -->
-    {% block scripts %}{% endblock %}
+    {% block scripts %}
+    <script>
+        // Function to handle logout
+        function handleLogout() {
+            // Send logout request
+            fetch('/logout', {
+                method: 'GET',
+                credentials: 'same-origin'
+            }).then(() => {
+                console.log('Logged out successfully');
+            }).catch(error => {
+                console.error('Logout error:', error);
+            });
+        }
+    
+        // Listen for page exit events
+        window.addEventListener('beforeunload', function(e) {
+            handleLogout();
+            
+            // Clear session storage
+            sessionStorage.clear();
+            
+            // Clear cookies (optional)
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+        });
+    
+        // Handle tab close
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                handleLogout();
+            }
+        });
+    </script>
+    {% endblock %}
 </body>
 </html>

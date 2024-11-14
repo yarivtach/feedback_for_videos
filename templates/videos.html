@@ -17,7 +17,7 @@
     {% if videos %}
         <div class="video-gallery">
             {% for video_id, video in videos.items() %}
-                <div class="video-item">
+                <div class = "{%if video_id in watched_videos %}video-item-watched{% else %}video-item{% endif %}">
                     <div class="video-container">
                         {% if video.url %}
                             <video width="100%" controls>
@@ -34,7 +34,11 @@
                     <div class="video-content">
                         <h3 class="video-title">{{ video.title }}</h3>
                         <a href="{{ url_for('video_page', video_name=video_id) }}" 
-                           class="watch-button">Watch Video</a>
+                           class="watch-button">Watch Video
+                            {% if video_id in watched_videos %}
+                                <span class="watched-badge">✓ Watched</span>
+                            {% endif %}
+                        </a>
                     </div>
                 </div>
             {% endfor %}

@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from db import Database
 import tests.verify_credentials
 from configManager import ConfigManager
+import random
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 static_folder = os.path.join(basedir, 'static')
@@ -134,7 +135,11 @@ def video_gallery():
         videos = list_videos()
         if not videos and not storage_client:
             return "Error connecting to storage", 500
-        return render_template('videos.html', videos=videos, bucket_name=bucket_name)
+        
+        videos_shuffled = shuffle_videos_dict(videos)
+        watched_videos = session.get('watched_videos', [])
+        print(f"Watched videos: {watched_videos}")
+        return render_template('videos.html', videos=videos_shuffled, bucket_name=bucket_name, watched_videos=watched_videos)
     except Exception as e:
         print(f"Error in video gallery: {e}")
         return "An error occurred", 500
@@ -158,7 +163,15 @@ def questionnaire_form():
 
 @app.route('/static/Videos/<video_name>')
 def video_page(video_name):
-    # return render_template('video_page.html', video_name=video_name)
+    # Initialize watched_videos in session if it doesn't exist
+    if 'watched_videos' not in session:
+        session['watched_videos'] = []
+        
+    # Add the video to watched list if not already there
+    if video_name not in session['watched_videos']:
+        session['watched_videos'].append(video_name)
+        session.modified = True
+    
     videos = list_videos()
     video = videos.get(video_name)
     if not video:
@@ -235,6 +248,16 @@ def list_videos():
     
     return videos
 
+def shuffle_videos_dict(videos_dict):
+    """
+    Takes a dictionary of videos and returns a new dictionary with the same items in random order
+    """
+    # Get list of items
+    items = list(videos_dict.items())
+    # Shuffle the items
+    random.shuffle(items)
+    # Return a new dictionary with shuffled items
+    return dict(items)
 
 @app.route('/static/videos/<video_name>')
 def serve_video(video_name):
@@ -285,6 +308,7 @@ def thank_you():
 @app.route('/logout')
 def logout():
     session.pop('user_email', None)
+    session.pop('watched_videos', None)
     session.clear()
     return redirect(url_for('home'))
 
