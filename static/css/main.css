@@ -540,3 +540,78 @@ strong {
         padding: 1.5rem;
     }
 }
+.video-wrapper {
+    width: 100%;
+    max-width: 600px;  /* Makes video smaller than the original 640px */
+    margin: 2rem auto;  /* Centers the video and adds space above/below */
+    padding: 2%;
+    background-color: #f8f9fa;
+    border-radius: 1%;
+    box-shadow: 0 0.2% 1% rgba(0,0,0,0.1);
+}
+
+#videoPlayer {
+    width: 100%;
+    height: auto;
+    border-radius: 1%;
+    display: block;  /* Removes any unwanted spacing */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .video-wrapper {
+        max-width: 90%;
+        padding: 3%;
+
+    }
+}
+.video-wrapper {
+    width: 50%;
+    margin: 0 auto;
+    padding: 2%;
+    background-color: #f8f9fa;
+    border-radius: 1%;
+    border: 5% solid transparent;  /* Add transparent border by default */
+    transition: all 0.3s ease;  /* Smooth transition for border changes */
+}
+
+.key-pressed {
+    border: 20px solid #FFD700 !important;  /* Yellow border when space pressed */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);  /* Optional: adds glow effect */
+}
+
+#videoPlayer {
+    width: 100%;
+    height: auto;
+    border-radius: 1%;
+    display: block;
+}
+
+.instruction-box {
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.instruction-text {
+    margin: 0;
+    color: #495057;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.key-highlight {
+    display: inline-block;
+    padding: 2px 12px;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #007bff;
+    margin: 0 5px;
+}

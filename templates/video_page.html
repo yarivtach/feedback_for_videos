@@ -50,14 +50,49 @@
             cursor: pointer;
             text-decoration: none;
         }
+        /* New styles for instruction box */
+        .instruction-box {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .instruction-text {
+            margin: 0;
+            color: #495057;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        .key-highlight {
+            display: inline-block;
+            padding: 2px 12px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 0 5px;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h1>{{ video.title.capitalize() }} Video</h1>
+
+        <!-- New instruction box -->
+        <div class="instruction-box">
+            <p class="instruction-text">
+                <span class="key-highlight">C</span> Press and hold the "C" key while watching to mark important moments and add comments
+            </p>
+        </div>
+
         <div class="video-wrapper">
-            <video id="videoPlayer" width="640" height="480" controls>
+            <video id="videoPlayer" controls>
                 <source src="{{ video['url'] }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -87,20 +122,20 @@
             });
 
             document.addEventListener('keydown', function(event) {
-                if (event.code === 'Space' && !event.repeat && document.activeElement !== commentText) {
+                if (event.code === 'KeyC' && !event.repeat && document.activeElement !== commentText) {  // Changed from 'Space' to 'KeyC'
                     event.preventDefault();
                     startTime = videoPlayer.currentTime;
-                    videoPlayer.style.border = '5px solid red';
+                    videoPlayer.classList.add('key-pressed');
                 }
             });
 
             document.addEventListener('keyup', function(event) {
-                if (event.code === 'Space' && document.activeElement !== commentText) {
+                if (event.code === 'KeyC' && document.activeElement !== commentText) {  // Changed from 'Space' to 'KeyC'
                     event.preventDefault();
                     var endTime = videoPlayer.currentTime;
-                    console.log("Space key released, timestamp recording stopped");
+                    console.log("C key released, timestamp recording stopped");  // Updated log message
                     console.log("Timestamp recorded: ", startTime.toFixed(2), "-", endTime.toFixed(2));
-
+            
                     videoPlayer.style.border = 'none';
                     videoPlayer.pause();
                     showCommentBox();
