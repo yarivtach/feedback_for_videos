@@ -135,7 +135,7 @@
                     var endTime = videoPlayer.currentTime;
                     console.log("C key released, timestamp recording stopped");  // Updated log message
                     console.log("Timestamp recorded: ", startTime.toFixed(2), "-", endTime.toFixed(2));
-            
+                    videoPlayer.classList.remove('key-pressed');
                     videoPlayer.style.border = 'none';
                     videoPlayer.pause();
                     showCommentBox();
