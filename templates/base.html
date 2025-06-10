@@ -51,5 +51,40 @@
     {% block scripts %}
     
     {% endblock %}
+
+    <script>
+        // Function to handle logout
+        function handleLogout() {
+            // Create a synchronous request for more reliable execution during page unload
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/auto-logout', false);  // false makes it synchronous
+            xhr.send();
+        }
+
+        // Listen for page unload events
+        window.addEventListener('beforeunload', function(e) {
+            handleLogout();
+            // Modern browsers don't require a return value for simple unloading
+        });
+
+        // Backup using visibility change (for mobile or when tabs are switched)
+        let visibilityTimeout;
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                // Page is hidden (tab switch, minimize, etc.)
+                visibilityTimeout = setTimeout(function() {
+                    handleLogout();
+                }, 30000); // 30 seconds of inactivity before logout
+            } else {
+                // User came back, cancel the logout
+                clearTimeout(visibilityTimeout);
+            }
+        });
+
+        // For more reliable coverage, also handle actual page exit
+        window.addEventListener('unload', function() {
+            handleLogout();
+        });
+    </script>
 </body>
 </html>

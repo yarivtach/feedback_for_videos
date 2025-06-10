@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Data Analysis Dashboard{% endblock %}
+
+{% block content %}
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff5722;
+}
+
+.data-section {
+    margin: 2rem 0;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.feedback-details {
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.export-btn {
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 1rem 0;
+}
+
+.json-view {
+    background: #f1f1f1;
+    padding: 1rem;
+    border-radius: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+</style>
+
+<div class="container">
+    <h1>📊 Data Analysis Dashboard</h1>
+    
+    <!-- Summary Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.total_sessions }}</div>
+            <div>Complete Sessions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.total_video_feedbacks }}</div>
+            <div>Video Feedbacks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.unique_users }}</div>
+            <div>Unique Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.videos_watched|length }}</div>
+            <div>Videos Analyzed</div>
+        </div>
+    </div>
+    
+    <!-- Export Options -->
+    <div class="data-section">
+        <h2>📁 Export Data</h2>
+        <a href="{{ url_for('export_data') }}" class="export-btn">Download All Data (JSON)</a>
+    </div>
+    
+    <!-- Videos Watched Stats -->
+    <div class="data-section">
+        <h2>🎬 Videos Watched</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Video Name</th>
+                    <th>Times Watched</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video, count in stats.videos_watched.items() %}
+                <tr>
+                    <td>{{ video.title() }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Complete Sessions -->
+    <div class="data-section">
+        <h2>📝 Complete Video Sessions</h2>
+        {% if data.video_sessions %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Video</th>
+                    <th>Safety</th>
+                    <th>Speed</th>
+                    <th>Convenience</th>
+                    <th>Feedbacks</th>
+                    <th>Comments</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in data.video_sessions %}
+                <tr>
+                    <td>{{ session.user_email }}</td>
+                    <td>{{ session.video_name.title() }}</td>
+                    <td>{{ session.questionnaire.safety }}/5</td>
+                    <td>{{ session.questionnaire.speed }}/5</td>
+                    <td>{{ session.questionnaire.convenience }}/5</td>
+                    <td>{{ session.total_feedback_count }}</td>
+                    <td>{{ session.total_comment_count }}</td>
+                    <td>{{ session.created_at[:19] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No complete sessions found.</p>
+        {% endif %}
+    </div>
+    
+    <!-- Individual Video Feedbacks -->
+    <div class="data-section">
+        <h2>🎯 Video Feedback Details</h2>
+        {% if data.video_feedbacks %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Video</th>
+                    <th>Timestamp</th>
+                    <th>Environment</th>
+                    <th>Objects</th>
+                    <th>Action</th>
+                    <th>Speed</th>
+                    <th>Cause</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in data.video_feedbacks %}
+                <tr>
+                    <td>{{ feedback.user_email }}</td>
+                    <td>{{ feedback.video_name.title() }}</td>
+                    <td>{{ feedback.timestamp }}</td>
+                    <td class="feedback-details">{{ feedback.environment[:50] }}{% if feedback.environment|length > 50 %}...{% endif %}</td>
+                    <td class="feedback-details">{{ feedback.nearby_objects[:50] }}{% if feedback.nearby_objects|length > 50 %}...{% endif %}</td>
+                    <td>{{ feedback.desired_action }}</td>
+                    <td>{{ feedback.desired_velocity }}</td>
+                    <td>{{ feedback.cause_for_action }}</td>
+                    <td class="feedback-details">{{ feedback.reason_for_action[:50] }}{% if feedback.reason_for_action|length > 50 %}...{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No video feedbacks found.</p>
+        {% endif %}
+    </div>
+    
+    <!-- Raw Data Preview -->
+    <div class="data-section">
+        <h2>🔍 Raw Data Preview</h2>
+        <details>
+            <summary>Click to view raw JSON data</summary>
+            <div class="json-view">
+                <pre>{{ data | tojson(indent=2) }}</pre>
+            </div>
+        </details>
+    </div>
+</div>
+{% endblock %} 

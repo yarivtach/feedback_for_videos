@@ -1,0 +1,46 @@
+<div id="feedbackForm" style="display: none;">
+    <input type="hidden" id="timestamp">
+    <table style="font-size: 12px; width: 100%;">
+        <tr>
+            <th style="width: 30%;">Category</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Environment</td>
+            <td><textarea id="environment" placeholder="Describe the surroundings (e.g., park, corridor, hall, etc.)"></textarea></td>
+        </tr>
+        <tr>
+            <td>Nearby Objects</td>
+            <td><textarea id="nearbyObjects" placeholder="List the closest visible objects (e.g., people, chairs, tables, etc.)"></textarea></td>
+        </tr>
+        <tr>
+            <td>Desired Action</td>
+            <td style="font-size: 11px;">
+                <label><input type="radio" name="desiredAction" value="Remote Control" checked> Remote Control</label>
+                <label><input type="radio" name="desiredAction" value="Change Velocity"> Change Velocity</label>
+            </td>
+        </tr>
+        <tr>
+            <td>Desired Velocity</td>
+            <td style="font-size: 11px;">
+                <label><input type="radio" name="desiredVelocity" value="Slow"> Slow</label>
+                <label><input type="radio" name="desiredVelocity" value="Medium" checked> Medium</label>
+                <label><input type="radio" name="desiredVelocity" value="Fast"> Fast</label>
+            </td>
+        </tr>
+        <tr>
+            <td>Cause for Action</td>
+            <td style="font-size: 11px;">
+                <label><input type="radio" name="causeForAction" value="Environment"> Environment</label>
+                <label><input type="radio" name="causeForAction" value="Nearby Objects" checked> Nearby Objects</label>
+            </td>
+        </tr>
+        <tr>
+            <td>Reason for Action</td>
+            <td><textarea id="reasonForAction" placeholder="Explain the reason (e.g., wet floor sign, crowded space, narrow corridor)" style="width: 100%; height: 30px;"></textarea></td>
+        </tr>
+    </table>
+    <button onclick="submitFeedback()" style="margin-top: 5px; float: right; font-size: 12px; padding: 2px 8px;">Submit</button>
+    <button onclick="document.getElementById('feedbackForm').style.display='none'" style="margin-top: 5px; font-size: 12px; padding: 2px 8px;">Cancel</button>
+
+</div>

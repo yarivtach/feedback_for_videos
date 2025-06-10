@@ -60,16 +60,49 @@
 
             <!-- Hidden field to store comments collected during the video -->
             <input type="hidden" id="commentsInput" name="comments">
+            
+            <!-- Hidden field to store feedbacks collected during the video -->
+            <input type="hidden" id="feedbacksInput" name="feedbacks">
 
             <input type="submit" value="Submit">
         </form>
     </div>
     <script>
         window.onload = function() {
-            var comments = JSON.parse(localStorage.getItem('comments') || '[]');  // Retrieve comments from local storage
-            document.getElementById('commentsInput').value = JSON.stringify(comments);  // Populate the hidden input with the comments
-            //localStorage.removeItem('comments');  // Optionally clear the comments from local storage
+            // Retrieve comments from localStorage
+            var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+            document.getElementById('commentsInput').value = JSON.stringify(comments);
+            
+            // Retrieve feedbacks from localStorage
+            var feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+            document.getElementById('feedbacksInput').value = JSON.stringify(feedbacks);
+            
+            console.log('📋 Questionnaire loaded with data:');
+            console.log('  Comments:', comments.length, 'items');
+            console.log('  Feedbacks:', feedbacks.length, 'items');
+            
+            // Optional: Clear localStorage after retrieving (uncomment if needed)
+            // localStorage.removeItem('comments');
+            // localStorage.removeItem('feedbacks');
         };
+        
+        // Add form validation
+        document.getElementById('questionnaireForm').addEventListener('submit', function(e) {
+            var safety = document.querySelector('input[name="safety"]:checked');
+            var speed = document.querySelector('input[name="speed"]:checked');
+            var convenience = document.querySelector('input[name="convenience"]:checked');
+            
+            if (!safety || !speed || !convenience) {
+                e.preventDefault();
+                alert('Please answer all questions before submitting.');
+                return false;
+            }
+            
+            console.log('✅ Submitting questionnaire with ratings:');
+            console.log('  Safety:', safety.value);
+            console.log('  Speed:', speed.value);
+            console.log('  Convenience:', convenience.value);
+        });
     </script>
 
 </body>

@@ -88,7 +88,6 @@
         <div class="instruction-box">
             <p class="instruction-text">
                 <span class="key-highlight">C</span> Press and hold the "C" key while watching to mark important moments and add comments
-            </p>
         </div>
 
         <div class="video-wrapper">
@@ -96,6 +95,23 @@
                 <source src="{{ video['url'] }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
+            
+            <!-- Fallback message for authentication issues -->
+            <div id="videoError" style="display: none; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 10px;">
+                <h3>Video Loading Issue</h3>
+                <p>The video requires Google Cloud authentication. Try these options:</p>
+                <div style="margin: 15px 0;">
+                    <a href="{{ video['url'] }}" target="_blank" class="questionnaire-btn" style="margin: 5px;">
+                        Open Video Directly
+                    </a>
+                    <button onclick="retryVideo()" class="questionnaire-btn" style="margin: 5px; background: #28a745;">
+                        Retry Loading
+                    </button>
+                </div>
+                <p style="font-size: 0.9em; color: #666;">
+                    Note: You may need to sign in to Google Cloud Storage in a new tab first.
+                </p>
+            </div>
         </div>
     </div>
 
@@ -103,6 +119,51 @@
         <textarea id="commentText" placeholder="Enter your comment here..."></textarea>
         <button onclick="submitComment()">Submit</button>
         <button onclick="cancelComment()">Cancel</button>
+    </div>
+
+    <!-- Add the feedback form with doubled size -->
+    <div id="feedbackForm" style="display: none; position: absolute; top: 20px; left: 20px; max-width: 640px; background-color: white; border: 1px solid #ccc; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 1000; font-size: 16px;">
+        <input type="hidden" id="timestamp">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+            <tr>
+                <td style="width: 30%; padding: 6px;">Environment</td>
+                <td style="padding: 6px;"><textarea id="environment" placeholder="Surroundings" style="width: 100%; height: 56px; font-size: 16px;"></textarea></td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;">Objects</td>
+                <td style="padding: 6px;"><textarea id="nearbyObjects" placeholder="Closest objects" style="width: 100%; height: 56px; font-size: 16px;"></textarea></td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;">Action</td>
+                <td style="padding: 6px;">
+                    <label style="margin-right: 12px;"><input type="radio" name="desiredAction" value="Remote Control" checked> Remote</label>
+                    <label><input type="radio" name="desiredAction" value="Change Velocity"> Velocity</label>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;">Speed</td>
+                <td style="padding: 6px;">
+                    <label style="margin-right: 8px;"><input type="radio" name="desiredVelocity" value="Slow"> Slow</label>
+                    <label style="margin-right: 8px;"><input type="radio" name="desiredVelocity" value="Medium" checked> Med</label>
+                    <label><input type="radio" name="desiredVelocity" value="Fast"> Fast</label>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;">Cause</td>
+                <td style="padding: 6px;">
+                    <label style="margin-right: 12px;"><input type="radio" name="causeForAction" value="Environment"> Environ.</label>
+                    <label><input type="radio" name="causeForAction" value="Nearby Objects" checked> Objects</label>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px;">Reason</td>
+                <td style="padding: 6px;"><textarea id="reasonForAction" placeholder="Reason for action" style="width: 100%; height: 56px; font-size: 16px;"></textarea></td>
+            </tr>
+        </table>
+        <div style="text-align: right;">
+            <button onclick="document.getElementById('feedbackForm').style.display='none'" style="font-size: 16px; padding: 6px 14px; margin-right: 10px;">Cancel</button>
+            <button onclick="submitFeedback()" style="font-size: 16px; padding: 6px 14px;">Submit</button>
+        </div>
     </div>
 
     <script>
@@ -113,16 +174,38 @@
             var commentText = document.getElementById('commentText');
             var startTime;
             var comments = []; // Array to store comments
+            var feedbacks = []; // Array to store feedbacks
+
             console.log("Video player loaded");
+            
+            // Helper function to check if user is typing in any input field
+            function isUserTyping() {
+                const activeElement = document.activeElement;
+                const inputTypes = ['INPUT', 'TEXTAREA', 'SELECT'];
+                return inputTypes.includes(activeElement.tagName) || activeElement.contentEditable === 'true';
+            }
+            
+            // Handle video loading errors
+            videoPlayer.addEventListener('error', function(e) {
+                console.error('Video loading error:', e);
+                document.getElementById('videoError').style.display = 'block';
+            });
+            
+            // Handle video loading success
+            videoPlayer.addEventListener('loadeddata', function() {
+                console.log('Video loaded successfully');
+                document.getElementById('videoError').style.display = 'none';
+            });
 
             videoPlayer.addEventListener('ended', function() {
-                console.log("Video ended, sending all comments...");
+                console.log("Video ended, sending all comments and feedbacks...");
                 localStorage.setItem('comments', JSON.stringify(comments));
+                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
                 window.location.href = "{{ url_for('questionnaire_form', video_name=video_name) }}";
             });
 
             document.addEventListener('keydown', function(event) {
-                if (event.code === 'KeyC' && !event.repeat && document.activeElement !== commentText) {  // Changed from 'Space' to 'KeyC'
+                if (event.code === 'KeyC' && !event.repeat && !isUserTyping()) {  // Use helper function
                     event.preventDefault();
                     startTime = videoPlayer.currentTime;
                     videoPlayer.classList.add('key-pressed');
@@ -130,21 +213,29 @@
             });
 
             document.addEventListener('keyup', function(event) {
-                if (event.code === 'KeyC' && document.activeElement !== commentText) {  // Changed from 'Space' to 'KeyC'
+                if (event.code === 'KeyC' && !isUserTyping()) {  // Use helper function
                     event.preventDefault();
                     var endTime = videoPlayer.currentTime;
-                    console.log("C key released, timestamp recording stopped");  // Updated log message
+                    console.log("C key released, timestamp recording stopped");
                     console.log("Timestamp recorded: ", startTime.toFixed(2), "-", endTime.toFixed(2));
                     videoPlayer.classList.remove('key-pressed');
                     videoPlayer.style.border = 'none';
                     videoPlayer.pause();
-                    showCommentBox();
+                    
+                    // Show feedback form instead of comment box
+                    showFeedbackForm();
                 }
             });
 
             function showCommentBox() {
                 commentBox.style.display = 'block';
                 commentText.focus();
+            }
+
+            function showFeedbackForm() {
+                feedbackForm.style.display = 'block';
+                document.getElementById('timestamp').value = startTime.toFixed(2) + " - " + videoPlayer.currentTime.toFixed(2);
+                document.getElementById('environment').focus();
             }
 
             window.submitComment = function() {
@@ -169,10 +260,64 @@
                 videoPlayer.play();
             }
 
+            window.submitFeedback = function() {
+                var feedback = {
+                    time: document.getElementById('timestamp').value,
+                    environment: document.getElementById('environment').value,
+                    nearby_objects: document.getElementById('nearbyObjects').value,
+                    desired_action: document.querySelector('input[name="desiredAction"]:checked').value,
+                    desired_velocity: document.querySelector('input[name="desiredVelocity"]:checked').value,
+                    cause_for_action: document.querySelector('input[name="causeForAction"]:checked').value,
+                    reason_for_action: document.getElementById('reasonForAction').value
+                };
+                feedbacks.push(feedback);
+                console.log("Feedback added. There are now " + feedbacks.length + " feedbacks.");
+                
+                // Send feedback to server immediately (optional)
+                fetch("{{ url_for('save_feedback') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        video_name: videoName,
+                        feedback: feedback
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Feedback saved:', data);
+                })
+                .catch((error) => {
+                    console.error('Error saving feedback:', error);
+                });
+                
+                closeFeedbackForm();
+            }
+    
+            window.cancelFeedback = function() {
+                closeFeedbackForm();
+            }
+            
+            function closeFeedbackForm() {
+                feedbackForm.style.display = 'none';
+                document.getElementById('environment').value = '';
+                document.getElementById('nearbyObjects').value = '';
+                document.getElementById('reasonForAction').value = '';
+                videoPlayer.play();
+            }
+
             window.addEventListener('beforeunload', function(event) {
                 navigator.sendBeacon("{{ url_for('logout') }}");
                 console.log("User is logging out");
             });
+            
+            // Function to retry video loading
+            window.retryVideo = function() {
+                console.log('Retrying video load...');
+                videoPlayer.load(); // Reload the video element
+                document.getElementById('videoError').style.display = 'none';
+            };
         });
     </script>
 </body>

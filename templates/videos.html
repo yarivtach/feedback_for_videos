@@ -3,36 +3,272 @@
 {% block title %}Video Gallery{% endblock %}
 
 {% block content %}
+<style>
+/* Video Gallery Thumbnail Styling - Integrated */
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 200px; /* Fixed height for consistent layout */
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures proper aspect ratio without distortion */
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.video-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.video-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+}
+
+.video-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.video-container:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-button {
+    color: white;
+    font-size: 1.5rem;
+    margin-left: 4px; /* Slight offset to center visually */
+}
+
+.video-content {
+    padding: 1rem;
+}
+
+.video-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    text-transform: capitalize;
+}
+
+.video-info {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 1rem 0;
+}
+
+/* Gallery Layout */
+.video-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.video-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.video-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Watched video styling */
+.video-item-watched {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-out;
+    border: 2px solid #28a745; /* Green border for watched videos */
+}
+
+.video-item-watched:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.video-item-watched .video-container::after {
+    content: "✓";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    z-index: 2;
+}
+
+.watch-button {
+    background: #ff5722;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.watch-button:hover {
+    background: transparent;
+    border-color: #ff5722;
+    color: #ff5722;
+    text-decoration: none;
+}
+
+.watched-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .video-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .video-container {
+        height: 150px; /* Smaller height on mobile */
+    }
+    
+    .video-title {
+        font-size: 1.1rem;
+    }
+    
+    .play-overlay {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .play-button {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-gallery {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+        gap: 1rem;
+    }
+    
+    .video-container {
+        height: 180px; /* Larger height in single column */
+    }
+}
+</style>
+
 <div class="container">
     <h1 class="page-title">Video Gallery</h1>
     
     <!-- Debug Information -->
+    <!--
     <div class="debug-info">
         <h3>Debug Info:</h3>
         <p>Number of videos: {{ videos|length if videos else 0 }}</p>
         <p>Bucket name: {{ bucket_name }}</p>
         <pre>{{ videos|tojson(indent=2) if videos else 'No videos' }}</pre>
     </div>
+    -->
 
     {% if videos %}
         <div class="video-gallery">
             {% for video_id, video in videos.items() %}
-                <div class = "{%if video_id in watched_videos %}video-item-watched{% else %}video-item{% endif %}">
+                <div class="{%if video_id in watched_videos %}video-item-watched{% else %}video-item{% endif %}">
                     <div class="video-container">
-                        {% if video.url %}
-                            <video width="100%" controls>
-                                <source src="{{ video.url }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        {% else %}
+                        <!-- Use thumbnail instead of video embed -->
+                        {% if video.thumbnail %}
                             <img class="video-thumbnail" 
-                                 src="https://storage.googleapis.com/{{ bucket_name }}/thumbnails/{{ video.title }}" 
+                                 src="{{ video.thumbnail }}" 
                                  alt="{{ video.title }}"
                                  onerror="this.src='/static/images/fallback-thumbnail.jpg'">
+                        {% else %}
+                            <!-- Fallback when no thumbnail -->
+                            <div class="video-placeholder">
+                                <div class="video-icon">▶</div>
+                                <p>{{ video.title }}</p>
+                            </div>
                         {% endif %}
+                        
+                        <!-- Play overlay -->
+                        <div class="play-overlay">
+                            <div class="play-button">▶</div>
+                        </div>
                     </div>
                     <div class="video-content">
                         <h3 class="video-title">{{ video.title }}</h3>
+                        <p class="video-info">
+                            {% if video.size and video.size > 0 %}
+                                Size: {{ "%.1f"|format(video.size / 1024 / 1024) }} MB
+                            {% endif %}
+                        </p>
                         <a href="{{ url_for('video_page', video_name=video_id) }}" 
                            class="watch-button">Watch Video
                             {% if video_id in watched_videos %}
@@ -54,24 +290,31 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Log video data
-        console.log('Videos data:', {{ videos|tojson if videos else '{}' }});
+        // Log video data for debugging
+        console.log('Video gallery loaded successfully');
         
-        // Monitor video loading errors
-        const videos = document.getElementsByTagName('video');
-        for(let video of videos) {
-            video.addEventListener('error', function(e) {
-                console.error('Error loading video:', e);
-                console.error('Video source:', this.getElementsByTagName('source')[0].src);
+        // Add click handlers for video containers to redirect to video page
+        const videoContainers = document.querySelectorAll('.video-container');
+        videoContainers.forEach(container => {
+            container.addEventListener('click', function() {
+                const watchButton = this.parentElement.querySelector('.watch-button');
+                if (watchButton) {
+                    window.location.href = watchButton.href;
+                }
             });
-        }
+        });
 
         // Monitor thumbnail loading errors
         const thumbnails = document.getElementsByClassName('video-thumbnail');
-        for(let thumbnail of thumbnails) {
+        for(let i = 0; i < thumbnails.length; i++) {
+            const thumbnail = thumbnails[i];
             thumbnail.addEventListener('error', function(e) {
-                console.error('Error loading thumbnail:', e);
-                console.error('Thumbnail source:', this.src);
+                console.error('Error loading thumbnail:', this.src);
+                // Replace with placeholder
+                const placeholder = document.createElement('div');
+                placeholder.className = 'video-placeholder';
+                placeholder.innerHTML = '<div class="video-icon">▶</div><p>' + this.alt + '</p>';
+                this.parentElement.replaceChild(placeholder, this);
             });
         }
     });

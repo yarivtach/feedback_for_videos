@@ -1,6 +1,5 @@
 from typing import List, Dict, Any
 import pandas as pd
-import numpy as np
 from datetime import datetime
 from collections import defaultdict
 from db import Database
