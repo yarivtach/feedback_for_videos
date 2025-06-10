@@ -10,14 +10,49 @@ class Database:
         mongo_uri = os.getenv('MONGO_URI')
         try:
             # Configure MongoDB client with SSL and timeout settings for Render deployment
-            self.client = MongoClient(
-                mongo_uri,
-                serverSelectionTimeoutMS=5000,  # 5 seconds timeout
-                connectTimeoutMS=5000,
-                socketTimeoutMS=5000,
-                retryWrites=True,
-                w='majority'
-            )
+            # Try multiple connection strategies for Render compatibility
+            connection_attempts = [
+                # Attempt 1: Standard connection with SSL disabled
+                {
+                    'serverSelectionTimeoutMS': 10000,
+                    'connectTimeoutMS': 10000,
+                    'socketTimeoutMS': 10000,
+                    'ssl': False,
+                    'retryWrites': True,
+                    'w': 'majority'
+                },
+                # Attempt 2: With TLS but relaxed settings
+                {
+                    'serverSelectionTimeoutMS': 10000,
+                    'connectTimeoutMS': 10000,
+                    'socketTimeoutMS': 10000,
+                    'tls': True,
+                    'tlsInsecure': True,
+                    'retryWrites': True,
+                    'w': 'majority'
+                },
+                # Attempt 3: Basic connection
+                {
+                    'serverSelectionTimeoutMS': 10000,
+                    'connectTimeoutMS': 10000,
+                    'socketTimeoutMS': 10000,
+                }
+            ]
+            
+            last_error = None
+            for i, config in enumerate(connection_attempts, 1):
+                try:
+                    print(f"🔄 MongoDB connection attempt {i}/3...")
+                    self.client = MongoClient(mongo_uri, **config)
+                    break  # Success - exit the loop
+                except Exception as e:
+                    last_error = e
+                    print(f"❌ Attempt {i} failed: {str(e)[:100]}...")
+                    if i < len(connection_attempts):
+                        continue
+                    else:
+                        # All attempts failed, raise the last error
+                        raise last_error
             
             # Ping the server to ensure the connection is alive
             self.client.admin.command('ping')
