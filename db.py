@@ -12,12 +12,11 @@ class Database:
             # Configure MongoDB client with SSL and timeout settings for Render deployment
             self.client = MongoClient(
                 mongo_uri,
-                tlsCAFile=certifi.where(),
                 serverSelectionTimeoutMS=5000,  # 5 seconds timeout
                 connectTimeoutMS=5000,
                 socketTimeoutMS=5000,
-                tls=True,
-                tlsAllowInvalidCertificates=True  # Less strict SSL for compatibility
+                retryWrites=True,
+                w='majority'
             )
             
             # Ping the server to ensure the connection is alive
