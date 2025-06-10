@@ -77,15 +77,20 @@ videos_folder = os.path.join(basedir, 'Videos')
 app.config['VIDEOS_FOLDER'] = videos_folder
 
 
-#connect to the database
-print("Connecting to the database")
-try:
-    db = Database()
-    app.config['MONGO_URI'] = os.getenv('MONGO_URI')
-    print("✅ Database connection successful")
-except Exception as e:
-    print(f"❌ Database connection failed: {e}")
-    print("⚠️  App will continue without database functionality")
+# Database connection (optional)
+mongo_uri = os.getenv('MONGO_URI')
+if mongo_uri and mongo_uri.strip():
+    print("Connecting to the database")
+    try:
+        db = Database()
+        app.config['MONGO_URI'] = mongo_uri
+        print("✅ Database connection successful")
+    except Exception as e:
+        print(f"❌ Database connection failed: {e}")
+        print("⚠️  App will continue without database functionality")
+        db = None
+else:
+    print("📝 Database disabled - running in video-only mode")
     db = None
 VIDEOS_FOLDER = os.path.join(os.getcwd(), 'Videos')
 app.config['VIDEOS_FOLDER'] = VIDEOS_FOLDER
@@ -169,7 +174,11 @@ def submit_questionnaire():
         }
         
         # Save to database
-        success = db.save_video_session(session_data)
+        if db:
+            success = db.save_video_session(session_data)
+        else:
+            print("⚠️  Database not available - feedback not saved")
+            success = True  # Continue without database
         
         if success:
             print(f"✅ Complete session data saved for {user_email} - {video_name}")
@@ -383,7 +392,11 @@ def save_feedback():
         print(f"💾 Saving video feedback: {feedback_entry}")
         
         # Save to database using the new method
-        success = db.save_video_feedback(feedback_entry)
+        if db:
+            success = db.save_video_feedback(feedback_entry)
+        else:
+            print("⚠️  Database not available - video feedback not saved")
+            success = True  # Continue without database
         
         if success:
             return jsonify({'success': True, 'message': 'Video feedback saved successfully'})
