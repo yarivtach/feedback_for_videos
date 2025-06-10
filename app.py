@@ -39,7 +39,7 @@ try:
             
             # Initialize video storage manager
             try:
-                from VideoStorageManager import VideoStorageManager
+                from video_storage_manager import VideoStorageManager
                 video_storage = VideoStorageManager(bucket_name)
                 
                 # Test if the storage manager is working

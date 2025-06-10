@@ -16,8 +16,8 @@ class Database:
                 serverSelectionTimeoutMS=5000,  # 5 seconds timeout
                 connectTimeoutMS=5000,
                 socketTimeoutMS=5000,
-                ssl=True,
-                ssl_cert_reqs='CERT_NONE'  # Less strict SSL for compatibility
+                tls=True,
+                tlsAllowInvalidCertificates=True  # Less strict SSL for compatibility
             )
             
             # Ping the server to ensure the connection is alive
