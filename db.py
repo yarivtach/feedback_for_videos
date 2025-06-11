@@ -9,50 +9,35 @@ class Database:
         load_dotenv()
         mongo_uri = os.getenv('MONGO_URI')
         try:
-            # Try multiple connection strategies for Render compatibility
-            connection_attempts = [
-                # Attempt 1: Basic connection (let URI handle SSL)
-                {
-                    'serverSelectionTimeoutMS': 10000,
-                    'connectTimeoutMS': 10000,
-                    'socketTimeoutMS': 10000,
-                },
-                # Attempt 2: With explicit timeouts only
-                {
-                    'serverSelectionTimeoutMS': 15000,
-                    'connectTimeoutMS': 15000,
-                    'socketTimeoutMS': 15000,
-                    'maxPoolSize': 10,
-                },
-                # Attempt 3: Minimal connection
-                {
-                    'serverSelectionTimeoutMS': 5000,
-                }
-            ]
+            # Optimized connection for MongoDB Atlas with mongodb+srv URI
+            print(f"🔄 Connecting to MongoDB Atlas: {mongo_uri.split('@')[1].split('/')[0]}")
             
-            last_error = None
-            for i, config in enumerate(connection_attempts, 1):
-                try:
-                    print(f"🔄 MongoDB connection attempt {i}/3...")
-                    self.client = MongoClient(mongo_uri, **config)
-                    break  # Success - exit the loop
-                except Exception as e:
-                    last_error = e
-                    print(f"❌ Attempt {i} failed: {str(e)[:100]}...")
-                    if i < len(connection_attempts):
-                        continue
-                    else:
-                        # All attempts failed, raise the last error
-                        raise last_error
+            # For mongodb+srv URIs, SSL is automatically enabled - don't override
+            self.client = MongoClient(
+                mongo_uri,
+                serverSelectionTimeoutMS=15000,  # 15 seconds for Atlas
+                connectTimeoutMS=15000,
+                socketTimeoutMS=20000,
+                maxPoolSize=10,
+                retryWrites=True,
+                w='majority'
+            )
             
             # Ping the server to ensure the connection is alive
             self.client.admin.command('ping')
+            
+            # Extract database name from URI (should be 'feedbacks')
             db_name = mongo_uri.split('/')[-1].split('?')[0]
-            print(f"Database name extracted: '{db_name}'")  # Debug print
-            if not db_name:
-                raise ValueError("Database name is empty. Check your MONGO_URI.")
+            print(f"📄 Database name extracted: '{db_name}'")
+            
+            if not db_name or db_name.strip() == '':
+                print("⚠️  No database name in URI, using default: 'feedbacks'")
+                db_name = 'feedbacks'
+            
             self.db = self.client.get_database(db_name)
-            print(f"✅ Connected to MongoDB at {mongo_uri}, Database: {db_name}")
+            print(f"✅ Successfully connected to MongoDB Atlas!")
+            print(f"📊 Database: {db_name}")
+            print(f"🌐 Cluster: {mongo_uri.split('@')[1].split('/')[0]}")
             
             
         except errors.ConnectionFailure as e:

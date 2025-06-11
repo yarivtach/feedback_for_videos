@@ -264,11 +264,7 @@
                     </div>
                     <div class="video-content">
                         <h3 class="video-title">{{ video.title }}</h3>
-                        <p class="video-info">
-                            {% if video.size and video.size > 0 %}
-                                Size: {{ "%.1f"|format(video.size / 1024 / 1024) }} MB
-                            {% endif %}
-                        </p>
+
                         <a href="{{ url_for('video_page', video_name=video_id) }}" 
                            class="watch-button">Watch Video
                             {% if video_id in watched_videos %}
