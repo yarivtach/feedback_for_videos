@@ -9,33 +9,24 @@ class Database:
         load_dotenv()
         mongo_uri = os.getenv('MONGO_URI')
         try:
-            # Configure MongoDB client with SSL and timeout settings for Render deployment
             # Try multiple connection strategies for Render compatibility
             connection_attempts = [
-                # Attempt 1: Standard connection with SSL disabled
+                # Attempt 1: Basic connection (let URI handle SSL)
                 {
                     'serverSelectionTimeoutMS': 10000,
                     'connectTimeoutMS': 10000,
                     'socketTimeoutMS': 10000,
-                    'ssl': False,
-                    'retryWrites': True,
-                    'w': 'majority'
                 },
-                # Attempt 2: With TLS but relaxed settings
+                # Attempt 2: With explicit timeouts only
                 {
-                    'serverSelectionTimeoutMS': 10000,
-                    'connectTimeoutMS': 10000,
-                    'socketTimeoutMS': 10000,
-                    'tls': True,
-                    'tlsInsecure': True,
-                    'retryWrites': True,
-                    'w': 'majority'
+                    'serverSelectionTimeoutMS': 15000,
+                    'connectTimeoutMS': 15000,
+                    'socketTimeoutMS': 15000,
+                    'maxPoolSize': 10,
                 },
-                # Attempt 3: Basic connection
+                # Attempt 3: Minimal connection
                 {
-                    'serverSelectionTimeoutMS': 10000,
-                    'connectTimeoutMS': 10000,
-                    'socketTimeoutMS': 10000,
+                    'serverSelectionTimeoutMS': 5000,
                 }
             ]
             
